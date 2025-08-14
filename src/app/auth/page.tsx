@@ -31,16 +31,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <div className="w-full">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-6">
+      <div className="w-full max-w-sm mx-auto mt-32">
         {/* 로고 영역 */}
-        <Logo />
+        <div className="mb-8">
+          <Logo />
+        </div>
+        
         {/* 에러 메시지 */}
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             {error}
           </div>
         )}
+        
         {/* 로그인 폼 */}
         <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
       </div>

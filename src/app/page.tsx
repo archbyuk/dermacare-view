@@ -1,23 +1,33 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { BottomNav } from '@/components/nav/bottom-nav';
+import { TreatmentListTab } from '@/components/tabs/treatment-list-tab';
+import { AppointmentsTab } from '@/components/tabs/appointments-tab';
+import { ProfileTab } from '@/components/tabs/profile-tab';
 
-export default function HomePage() {
-  const router = useRouter();
+export default function MainPage() {
+  const [activeTab, setActiveTab] = useState('treatments');
 
-  useEffect(() => {
-    // 메인 페이지 접속 시 자동으로 로그인 페이지로 리다이렉트
-    router.replace('/auth');
-  }, [router]);
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'treatments':
+        return <TreatmentListTab />;
+      case 'appointments':
+        return <AppointmentsTab />;
+      case 'profile':
+        return <ProfileTab />;
+      default:
+        return <TreatmentListTab />;
+    }
+  };
 
-  // 여기도 추후 디벨롭
   return (
-    <div className="min-h-screen from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">리다이렉트 중...</p>
+    <div className="min-h-screen bg-white pb-20">
+      <div className="max-w-lg mx-auto px-4 py-8">
+        {renderTabContent()}
       </div>
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }

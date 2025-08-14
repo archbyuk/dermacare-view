@@ -37,7 +37,7 @@ export async function loginAction(formData: FormData) {
         });
       }
       
-      redirect('/treatment_list');
+      redirect('/');
     } else {
       throw new Error(response.data.message || '로그인에 실패했습니다.');
     }

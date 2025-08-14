@@ -22,14 +22,15 @@ export async function middleware(request: NextRequest) {
       }
     } catch (error) {
       // 토큰 갱신 실패 시 무시하고 계속 진행
+      console.error('Token refresh failed:', error)
     }
   }
   
   const isAuthenticated = !!accessToken
   
   // 보호된 경로들 (인증 필요)
-  const protectedPaths = ['/treatment_list']
-  const isProtectedPath = protectedPaths.some(path => 
+  const protectedPaths = ['/']
+  const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
   
@@ -46,7 +47,7 @@ export async function middleware(request: NextRequest) {
   
   // 이미 인증된 사용자가 로그인 페이지에 접근하는 경우
   if (isAuthPath && isAuthenticated) {
-    return NextResponse.redirect(new URL('/treatment_list', request.url))
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return NextResponse.next()
@@ -54,13 +55,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ]
+    // svg/png/jpg/webp/ico 같은 정적 파일은 제외
+    '/((?!api|_next/static|_next/image|favicon.ico|auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
 }

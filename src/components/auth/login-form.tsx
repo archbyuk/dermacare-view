@@ -22,17 +22,17 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   };
 
   return (
-    <Card className="flex w-full border-0 shadow-none">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center text-black">
+    <Card className="w-full border-0 bg-white shadow-none">
+      <CardHeader className="">
+        <CardTitle className="text-2xl font-bold text-center text-gray-900">
           환영합니다
         </CardTitle>
-        <p className="text-sm text-gray-600 text-center font-medium">
+        <p className="text-sm text-gray-500 text-center font-medium">
           로그인하여 페이스필터의 시술 목록을 확인하세요
         </p>
       </CardHeader>
 
-      <CardContent className="space-y-5 px-8">
+      <CardContent className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* 이름 입력 */}
           <div className="space-y-2">
@@ -47,7 +47,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
               placeholder="이름을 입력하세요"
               required
               disabled={isLoading}
-              className="h-11 text-s text-gray-500 border-2 border-gray-200 focus:border-gray-500 transition-colors placeholder:text-gray-400"
+              className="h-12 text-sm text-gray-700 border-1 border-gray-200 focus:border-gray-500 focus:ring-0 transition-colors placeholder:text-gray-400 rounded-lg"
             />
           </div>
 
@@ -61,14 +61,14 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요."
+              placeholder="비밀번호를 입력하세요"
               required
               disabled={isLoading}
-              className="h-11 text-sm text-gray-500 border-2 border-gray-200 focus:border-gray-500 transition-colors placeholder:text-gray-400"
+              className="h-12 text-sm text-gray-700 border-1 border-gray-200 focus:border-gray-500 focus:ring-0 transition-colors placeholder:text-gray-400 rounded-lg"
             />
           </div>
 
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between text-xs pt-2">
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="remember" 
@@ -91,7 +91,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
           <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 text-sm font-semibold border-2 border-gray-300 bg-gray-300 hover:bg-gray-600 transition-all duration-200 ease-in-out"
+              className="w-full h-12 text-sm font-semibold bg-gray-500 hover:bg-gray-700 text-white transition-all duration-200 ease-in-out rounded-lg mt-2"
             >
             {isLoading ? (
               <div className="flex items-center justify-center">

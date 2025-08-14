@@ -36,11 +36,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="w-full max-w-md mx-auto">
-            {children}
-          </div>
-        </div>
+        {children}
       </body>
     </html>
   );
