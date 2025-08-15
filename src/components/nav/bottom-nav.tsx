@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { ClipboardList, Search, User } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -12,29 +12,17 @@ const navItems: NavItem[] = [
   {
     id: 'treatments',
     label: '시술목록',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-    ),
+    icon: <ClipboardList className="w-6 h-6" />,
   },
   {
-    id: 'appointments',
-    label: '예약',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
+    id: 'search',
+    label: '검색',
+    icon: <Search className="w-6 h-6" />,
   },
   {
-    id: 'profile',
-    label: '프로필',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    ),
+    id: 'admin',
+    label: '관리자',
+    icon: <User className="w-6 h-6" />,
   },
 ];
 
@@ -54,10 +42,10 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors ${
+                className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors w-20 h-12 ${
                   isActive
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ? 'text-gray-800 bg-gray-100'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <div className="mb-1">{item.icon}</div>

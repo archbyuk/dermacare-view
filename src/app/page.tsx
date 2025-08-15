@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { TopNav } from '@/components/nav/top-nav';
 import { BottomNav } from '@/components/nav/bottom-nav';
 import { TreatmentListTab } from '@/components/tabs/treatment-list-tab';
-import { AppointmentsTab } from '@/components/tabs/appointments-tab';
-import { ProfileTab } from '@/components/tabs/profile-tab';
+import { SearchTab } from '@/components/tabs/search-tab';
+import { AdminTab } from '@/components/tabs/admin-tab';
 
 export default function MainPage() {
   const [activeTab, setActiveTab] = useState('treatments');
@@ -13,20 +14,28 @@ export default function MainPage() {
     switch (activeTab) {
       case 'treatments':
         return <TreatmentListTab />;
-      case 'appointments':
-        return <AppointmentsTab />;
-      case 'profile':
-        return <ProfileTab />;
+      case 'search':
+        return <SearchTab />;
+      case 'admin':
+        return <AdminTab />;
       default:
         return <TreatmentListTab />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20">
-      <div className="max-w-lg mx-auto px-4 py-8">
-        {renderTabContent()}
+    <div className="min-h-screen bg-white">
+      {/* 상단 네비게이션바 */}
+      <TopNav activeTab={activeTab} />
+      
+      {/* 메인 콘텐츠 */}
+      <div className="pt-20 pb-10">
+        <div className="max-w-lg mx-auto px-3 py-6">
+          {renderTabContent()}
+        </div>
       </div>
+      
+      {/* 하단 네비게이션바 */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );

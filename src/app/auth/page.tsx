@@ -23,8 +23,10 @@ export default function LoginPage() {
       await loginAction(formData);
       // 성공 시 Server Action에서 자동으로 리다이렉트됨
       
-    } catch (error: any) {
-      setError(error.message || '로그인에 실패했습니다.');
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

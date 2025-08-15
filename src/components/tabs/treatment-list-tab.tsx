@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { logoutAction } from '@/app/actions';
 import { getTreatments } from '@/api/treatments-api';
 import { Product } from '@/types/treatments';
 import { TreatmentDetailModal } from './treatment-detail-modal';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Image from 'next/image';
 
 interface TreatmentsState {
   allTreatments: Product[];
@@ -17,7 +19,6 @@ interface TreatmentsState {
 }
 
 export function TreatmentListTab() {
-  const router = useRouter();
   const [state, setState] = useState<TreatmentsState>({
     allTreatments: [],
     displayedTreatments: [],
@@ -53,10 +54,10 @@ export function TreatmentListTab() {
         loading: false
       }));
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       setState(prev => ({
         ...prev,
-        error: error.message,
+        error: error instanceof Error ? error.message : '시술 목록을 불러오는데 실패했습니다.',
         loading: false
       }));
     }
@@ -169,14 +170,6 @@ export function TreatmentListTab() {
     }));
   }, [filteredAndSortedTreatments]);
 
-  const handleLogout = async () => {
-    try {
-      await logoutAction();
-    } catch (error) {
-      console.error('로그아웃 에러:', error);
-    }
-  };
-
   const categories = [
     { id: 'all', label: '전체' },
     { id: 'standard', label: '기본시술' },
@@ -192,148 +185,131 @@ export function TreatmentListTab() {
 
   return (
     <div>
-      {/* 헤더 */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">시술 목록</h1>
-          <p className="text-sm text-gray-500">시술 전체 목록을 확인할 수 있습니다</p>
-        </div>
-        <button 
-          onClick={handleLogout}
-          className="p-2 rounded-lg hover:bg-gray-100"
-          title="로그아웃"
-        >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-        </button>
-      </div>
-
       {/* 카테고리 탭 */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-1 overflow-x-auto">
+      <div className="flex items-center justify-between mx-4">
+        <div className="flex items-center justify-between w-full gap-5">
+          <div className="flex gap-1 overflow-x-auto">
             {categories.map((category) => (
-              <button
+              <Button
                 key={category.id}
+                variant="outline"
+                size="default"
                 onClick={() => handleCategoryChange(category.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                className={`whitespace-nowrap py-1 px-3 transition-colors ${
+                  selectedCategory === category.id 
+                    ? 'bg-gray-400 text-white hover:bg-gray-200' 
+                    : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-white border-gray-300 '
                 }`}
               >
                 {category.label}
-              </button>
+              </Button>
             ))}
           </div>
           
-          <select
-            value={sortBy}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select value={sortBy} onValueChange={handleSortChange}>
+            <SelectTrigger className="w-32 bg-white text-gray-600 border-gray-300">
+              <SelectValue placeholder="정렬" />
+            </SelectTrigger>
+            
+            <SelectContent className="w-24 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+              {sortOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* 메인 콘텐츠 영역 */}
-      <div className="bg-white rounded-lg p-6">
-        {/* 초기 로딩 상태 */}
-        {state.loading && state.displayedTreatments.length === 0 && (
-          <div className="text-center py-8">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-sm text-gray-500">시술 목록을 불러오는 중...</p>
-          </div>
-        )}
-
-        {/* 에러 상태 */}
-        {state.error && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+      <Card className="border-none shadow-none">
+        <CardContent className="px-6 py-2">
+          
+          {/* 초기 로딩 상태 */}
+          {state.loading && state.displayedTreatments.length === 0 && (
+            <div className="text-center py-8">
+              <Image src="/symbol_facefilter.svg" alt="로딩" width={32} height={32} className="animate-spin mx-auto mb-4" />
+              <p className="text-sm text-gray-600">로딩 중입니다</p>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">오류 발생</h3>
-            <p className="text-sm text-gray-500 mb-4">{state.error}</p>
-            <button 
-              onClick={fetchAllTreatments}
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
-            >
-              다시 시도
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* 데이터 표시 */}
-        {!state.loading && !state.error && state.displayedTreatments.length > 0 && (
-          <div>
-            <h3 className="text-base font-medium text-gray-900 mb-3">
-              시술 목록 ({filteredAndSortedTreatments().length}개)
-            </h3>
-            <div className="space-y-1">
-              {state.displayedTreatments.map((treatment: Product, index: number) => (
-                <div 
-                  key={`${treatment.ID}-${index}`} 
-                  className="border-b border-gray-100 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => openTreatmentDetail(treatment)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">
-                        {treatment.Product_Name || `시술 ${treatment.ID}`}
-                      </h4>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-500">
-                          {treatment.Product_Type === 'standard' ? 'S' : 'E'}
-                        </span>
-                        {treatment.procedure_names.length > 0 && (
-                          <>
-                            <span className="text-xs text-gray-400">||</span>
-                            <span className="text-xs text-gray-500 truncate">
-                              {treatment.procedure_names.slice(0, 2).join(' + ')}
-                              {treatment.procedure_names.length > 2 && '...'}
-                            </span>
-                          </>
+          {/* 에러 상태 */}
+          {state.error && (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">오류 발생</h3>
+              <p className="text-sm text-gray-500 mb-4">{state.error}</p>
+              <Button onClick={fetchAllTreatments}>
+                다시 시도
+              </Button>
+            </div>
+          )}
+
+          {/* 데이터 표시 */}
+          {!state.loading && !state.error && state.displayedTreatments.length > 0 && (
+            <div>
+              <h3 className="text-md font-medium text-gray-900 mb-3">
+                총 시술 개수: {filteredAndSortedTreatments().length}개
+              </h3>
+              
+              <div className="space-y-1">
+                {state.displayedTreatments.map((treatment: Product, index: number) => (
+                  <div 
+                    key={`${treatment.ID}-${index}`} 
+                    className="border-b border-gray-100 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => openTreatmentDetail(treatment)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 truncate">
+                          {treatment.Product_Name || `시술 ${treatment.ID}`}
+                        </h4>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className="text-xs text-gray-500"> | </span>
+                          {treatment.procedure_names.length > 0 && (
+                            <>
+                              <span className="text-xs text-gray-500 truncate">
+                                {treatment.procedure_names.slice(0, 2).join(' + ')}
+                                {treatment.procedure_names.length > 2 && '...'}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right ml-3 flex-shrink-0">
+                        <p className="text-sm font-medium text-gray-900">
+                          {treatment.Sell_Price?.toLocaleString()}원
+                        </p>
+                        {treatment.Original_Price && treatment.Original_Price > treatment.Sell_Price && (
+                          <p className="text-xs text-gray-400 line-through">
+                            {treatment.Original_Price.toLocaleString()}원
+                          </p>
                         )}
                       </div>
                     </div>
-                    <div className="text-right ml-3 flex-shrink-0">
-                      <p className="text-sm font-medium text-gray-900">
-                        {treatment.Sell_Price?.toLocaleString()}원
-                      </p>
-                      {treatment.Original_Price && treatment.Original_Price > treatment.Sell_Price && (
-                        <p className="text-xs text-gray-400 line-through">
-                          {treatment.Original_Price.toLocaleString()}원
-                        </p>
-                      )}
-                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 데이터 없음 */}
-        {!state.loading && !state.error && state.displayedTreatments.length === 0 && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
+          {/* 데이터 없음 */}
+          {!state.loading && !state.error && state.displayedTreatments.length === 0 && (
+            <div className="text-center py-8">
+              <div className="w-16 h-11 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <Image src="/symbol_facefilter.svg" alt="데이터 없음" width={32} height={32} />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">시술 목록이 없습니다</h3>
+              <p className="text-sm text-gray-500">선택한 조건에 맞는 시술이 없습니다</p>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">시술 목록이 없습니다</h3>
-            <p className="text-sm text-gray-500">선택한 조건에 맞는 시술이 없습니다</p>
-          </div>
-        )}
-      </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* 시술 상세 모달 */}
       {selectedTreatment && (

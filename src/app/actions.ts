@@ -41,24 +41,9 @@ export async function loginAction(formData: FormData) {
     } else {
       throw new Error(response.data.message || '로그인에 실패했습니다.');
     }
-  } catch (error: any) {
-    // NEXT_REDIRECT는 정상적인 리다이렉트이므로 무시
-    if (error.message === 'NEXT_REDIRECT') {
-      throw error; // 리다이렉트를 계속 진행
-    }
-    
-    console.error('Login error:', error);
-    
-    let errorMessage = '로그인에 실패했습니다.';
-    
-    if (error.code === 'ECONNREFUSED') {
-      errorMessage = '서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요.';
-    } else if (error.response?.data?.detail) {
-      errorMessage = error.response.data.detail;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    
+  } catch (error: unknown) {
+    console.error('로그인 에러:', error);
+    const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
     throw new Error(errorMessage);
   }
 }
@@ -99,13 +84,13 @@ export async function refreshTokenAction() {
     } else {
       throw new Error(response.data.message || '토큰 갱신에 실패했습니다.');
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Refresh token error:', error);
     
     // 토큰 갱신 실패 시 쿠키 삭제
     await clearAuthCookies();
     
-    const errorMessage = error.response?.data?.detail || error.message || '토큰 갱신에 실패했습니다.';
+    const errorMessage = error instanceof Error ? error.message : '토큰 갱신에 실패했습니다.';
     throw new Error(errorMessage);
   }
 }
@@ -128,7 +113,7 @@ export async function logoutAction() {
     
     // 로그인 페이지로 리다이렉트
     redirect('/auth');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout error:', error);
     
     // 에러가 발생해도 쿠키는 삭제

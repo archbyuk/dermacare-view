@@ -22,10 +22,9 @@ export async function getTreatments(params: ProductsQueryParams = {}): Promise<P
     });
     
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('시술 목록 조회 에러:', error);
-    
-    const errorMessage = error.response?.data?.detail || error.message || '시술 목록 조회에 실패했습니다.';
+    const errorMessage = error instanceof Error ? error.message : '시술 목록 조회에 실패했습니다.';
     throw new Error(errorMessage);
   }
 }
@@ -42,10 +41,9 @@ export async function getTreatmentDetail(params: ProductDetailQueryParams): Prom
     });
     
     return response.data;
-  } catch (error: any) {
-    console.error('치료 상세 조회 에러:', error);
-    
-    const errorMessage = error.response?.data?.detail || error.message || '치료 상세 조회에 실패했습니다.';
+  } catch (error: unknown) {
+    console.error('시술 상세 조회 에러:', error);
+    const errorMessage = error instanceof Error ? error.message : '시술 상세 조회에 실패했습니다.';
     throw new Error(errorMessage);
   }
 }

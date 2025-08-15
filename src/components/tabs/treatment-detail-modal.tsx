@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { getTreatmentDetail } from '@/api/treatments-api';
 import { ProductDetail } from '@/types/treatments';
+import { Button } from '@/components/ui/button';
 
 interface TreatmentDetailModalProps {
   isOpen: boolean;
@@ -38,8 +40,9 @@ export function TreatmentDetailModal({
       });
       
       setDetail(response.data);
-    } catch (error: any) {
-      setError(error.message || '상세 정보를 불러오는데 실패했습니다.');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '상세 정보를 불러오는데 실패했습니다.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -50,24 +53,28 @@ export function TreatmentDetailModal({
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-hidden">
       <div className="bg-white rounded-lg w-full max-w-md h-[80vh] flex flex-col shadow-xl">
+        
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">시술 상세</h2>
-          <button
+          <Button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-gray-600 p-0 h-auto"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            
+          </Button>
         </div>
 
         {/* 내용 */}
-        <div className="p-4 flex-1 overflow-y-auto">
+        <div className="p-4 flex-1 overflow-y-auto relative">
           {loading && (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-start pt-20 bg-white bg-opacity-90">
+              <div className="flex items-center mb-4">
+                <Image src="/symbol_facefilter.svg" alt="로딩" width={32} height={32} className="animate-spin" />
+              </div>
+              <p className="text-gray-600 text-sm">로딩 중입니다</p>
             </div>
           )}
 
@@ -87,22 +94,14 @@ export function TreatmentDetailModal({
                 <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     detail.Product_Type === 'standard' 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-orange-100 text-orange-800'
+                      ? 'bg-gray-100 text-gray-800' 
+                      : 'bg-gray-100 text-gray-800'
                   }`}>
                     {detail.Product_Type === 'standard' ? '기본 시술' : '이벤트 시술'}
                   </span>
-                  <span>•</span>
+                  <span>||</span>
                   <span>{detail.Package_Type}</span>
                 </div>
-                {detail.Product_Description && (
-                  <div className="bg-blue-50 rounded-lg p-3 mb-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-1">시술 설명</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      {detail.Product_Description}
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* 가격 정보 */}
@@ -124,8 +123,8 @@ export function TreatmentDetailModal({
                 {detail.Discount_Rate && detail.Discount_Rate > 0 && (
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-sm text-gray-600">할인율</span>
-                    <span className="text-sm text-red-600 font-medium">
-                      {detail.Discount_Rate}% 할인
+                    <span className="text-sm text-red-500 font-medium">
+                      {Math.round(detail.Discount_Rate * 100)}%
                     </span>
                   </div>
                 )}
@@ -140,10 +139,13 @@ export function TreatmentDetailModal({
               )}
 
               {detail.custom_name && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">커스텀 시술</h4>
-                  <p className="text-sm text-gray-600">{detail.custom_name}</p>
-                </div>
+                                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">커스텀 시술</h4>
+                    <div className="flex items-center justify-between text-sm pl-3">
+                      <span className="text-gray-700">{detail.custom_name}</span>
+                      <span className="text-gray-500">최대 {detail.custom_details?.[0]?.Custom_Count}회</span>
+                    </div>
+                  </div>
               )}
 
               {/* 시술 상세 정보 */}
@@ -167,9 +169,9 @@ export function TreatmentDetailModal({
                   <h4 className="font-medium text-gray-900 mb-2">커스텀 시술 상세</h4>
                   <div className="space-y-2">
                     {detail.custom_details.map((custom, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
+                      <div key={index} className="flex items-center justify-between text-sm pl-3">
                         <span className="text-gray-700">{custom.Element_Info?.Name}</span>
-                        <span className="text-gray-500">{custom.Custom_Count}/{custom.Element_Limit}회</span>
+                        <span className="text-gray-500">{custom.Element_Limit ? `최대 ${custom.Element_Limit}회` : '제한없음'}</span>
                       </div>
                     ))}
                   </div>
@@ -182,7 +184,7 @@ export function TreatmentDetailModal({
                   <h4 className="font-medium text-gray-900 mb-2">시퀀스 시술</h4>
                   <div className="space-y-3">
                     {detail.sequence_details.map((sequence, index) => (
-                      <div key={index} className="border-l-2 border-blue-200 pl-3">
+                      <div key={index} className="border-l-2 border-gray-300 pl-3">
                         <h5 className="text-sm font-medium text-gray-800 mb-1">Step {sequence.Step_Num}</h5>
                         <div className="space-y-1">
                           {sequence.elements.map((element, elemIndex) => (
@@ -230,11 +232,11 @@ export function TreatmentDetailModal({
                       <span className="text-gray-900">{detail.element_details.Cost_Time}분</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">계획 상태</span>
-                      <span className="text-gray-900">{detail.element_details.Plan_State}</span>
+                      <span className="text-gray-600">티켓팅 여부</span>
+                      <span className="text-gray-900">{detail.element_details.Plan_State === '1' ? 'O' : 'X'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">계획 횟수</span>
+                      <span className="text-gray-600">티켓팅 횟수</span>
                       <span className="text-gray-900">{detail.element_details.Plan_Count}회</span>
                     </div>
                   </div>
@@ -242,16 +244,18 @@ export function TreatmentDetailModal({
               )}
 
               {/* 기간 정보 */}
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">유효기간</h4>
-                <p className="text-sm text-gray-600">{detail.Validity_Period}일</p>
-              </div>
+              {detail.Validity_Period && (
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">유효기간</h4>
+                  <p className="text-sm text-gray-600">{detail.Validity_Period}일</p>
+                </div>
+              )}
 
               {/* 시술 기간 */}
               {detail.Standard_Start_Date && detail.Standard_End_Date && (
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">시술 기간</h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 pl-3">
                     {detail.Standard_Start_Date} ~ {detail.Standard_End_Date}
                   </p>
                 </div>
@@ -261,26 +265,37 @@ export function TreatmentDetailModal({
               {detail.Event_Start_Date && detail.Event_End_Date && (
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">이벤트 기간</h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 pl-3">
                     {detail.Event_Start_Date} ~ {detail.Event_End_Date}
                   </p>
                 </div>
               )}
 
-              {/* ID 정보 (제외) */}
-              {/* ID는 제외하고 모든 정보를 표시했습니다 */}
+              {/* 시술 설명 - 맨 아래로 이동 */}
+              {detail.Product_Description && (
+                <div>
+                  <h4 className="text-md font-medium text-gray-900 mb-2">시술 설명</h4>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {detail.Product_Description}
+                    </p>
+                  </div>
+                </div>
+              )}
+
             </div>
           )}
         </div>
 
         {/* 하단 버튼 */}
-        <div className="p-4 border-t border-gray-200 flex-shrink-0">
-          <button
+        <div className="p-4 border-gray-200 flex-shrink-0">
+          <Button
             onClick={onClose}
-            className="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+            className="w-full bg-gray-500 py-2"
+            variant="secondary"
           >
             닫기
-          </button>
+          </Button>
         </div>
       </div>
     </div>

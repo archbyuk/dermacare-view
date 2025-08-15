@@ -53,6 +53,7 @@ export interface ProductDetail {
   bundle_name?: string;
   bundle_details?: BundleDetail[];
   custom_name?: string;
+  custom_count?: number;
   custom_details?: CustomDetail[];
   sequence_details?: SequenceDetail[];
 }
