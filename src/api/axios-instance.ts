@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // AWS 서버 URL로 강제 설정
-const API_BASE_URL = '/api/backend';
+const API_BASE_URL = "/api";
 
 const instance = axios.create({
   baseURL: API_BASE_URL,  
