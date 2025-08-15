@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { Logo } from '@/components/auth/login-logo';
 import { LoginForm } from '@/components/auth/login-form';
 import { loginAction } from '@/app/actions';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleLogin = async (username: string, password: string) => {
     setIsLoading(true);
@@ -20,13 +22,18 @@ export default function LoginPage() {
       formData.append('password', password);
       
       // Server Action 호출
-      await loginAction(formData);
-      // 성공 시 Server Action에서 자동으로 리다이렉트됨
-      
-    } catch (error: unknown) {
-      console.error('Login error:', error);
-      const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
-      setError(errorMessage);
+      const result = await loginAction(formData);
+
+      // loginAction에서 성공 시에만 객체를 반환하므로 result가 있으면 성공
+      if (result && result.success) {
+        // 로그인 성공 시 홈페이지로 이동
+        router.push('/');
+        router.refresh(); // 페이지 새로고침하여 쿠키 반영
+      } else if (result && !result.success) {
+        // 로그인 실패 시 에러 메시지 표시
+        console.error('로그인 실패:', result.error);
+        setError(result.error || '로그인에 실패했습니다.');
+      }
     } finally {
       setIsLoading(false);
     }

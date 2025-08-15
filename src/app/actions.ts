@@ -21,7 +21,7 @@ export async function loginAction(formData: FormData) {
       
       // access_token 쿠키 설정
       cookieStore.set('access_token', response.data.access_token!, {
-        httpOnly: true, // 클라이언트에서 접근 가능하도록 false로 설정
+        httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
         secure: true,
         sameSite: 'lax',
         maxAge: 3600 // 1시간
@@ -30,21 +30,37 @@ export async function loginAction(formData: FormData) {
       // refresh_token 쿠키 설정
       if (response.data.refresh_token) {
         cookieStore.set('refresh_token', response.data.refresh_token, {
-          httpOnly: true, // 클라이언트에서 접근 가능하도록 false로 설정
+          httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
           secure: true,
           sameSite: 'lax',
           maxAge: 7 * 24 * 3600 // 7일
         });
       }
       
-      redirect('/');
+      // 성공 결과 반환
+      return { 
+        success: true, 
+        message: '로그인 성공',
+        user_id: response.data.user_id,
+        role: response.data.role 
+      };
+      
     } else {
-      throw new Error(response.data.message || '로그인에 실패했습니다.');
+      // 실패 시에도 일관된 형식으로 반환
+      return {
+        success: false,
+        error: response.data.message || '로그인에 실패했습니다.'
+      };
     }
   } catch (error: unknown) {
     console.error('로그인 에러:', error);
     const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
-    throw new Error(errorMessage);
+    
+    // 에러 시에도 일관된 형식으로 반환
+    return {
+      success: false,
+      error: errorMessage
+    };
   }
 }
 
