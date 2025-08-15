@@ -72,6 +72,8 @@ export function SearchTab() {
         page_size: 30
       });
 
+      console.log('검색 결과:', response);
+
       setState(prev => ({
         ...prev,
         searchResults: response.data,
@@ -263,22 +265,27 @@ export function SearchTab() {
                           <h4 className="text-sm font-medium text-gray-900 truncate">
                             {treatment.Product_Name || `시술 ${treatment.ID}`}
                           </h4>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <span className="text-xs text-gray-500"> | </span>
-                            <span className="text-xs text-gray-500 truncate">
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full min-w-fit">
                               {treatment.Package_Type}
                             </span>
+                            {treatment.elements && treatment.elements.length > 0 && (
+                              <span className="text-xs text-gray-500 truncate">
+                                #{treatment.elements.slice(0, 2).join(' #')}
+                                {treatment.elements.length > 3 && '...'}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="text-right ml-3 flex-shrink-0">
-                          <p className="text-sm font-medium text-gray-900">
-                            {treatment.Sell_Price.toLocaleString()}원
-                          </p>
                           {treatment.Original_Price > treatment.Sell_Price && (
-                            <p className="text-xs text-gray-400 line-through">
+                            <p className="text-xs text-gray-400 line-through mb-0.5">
                               {treatment.Original_Price.toLocaleString()}원
                             </p>
                           )}
+                          <p className="text-sm font-medium text-gray-900 pr-1.5">
+                            {treatment.Sell_Price.toLocaleString()}원
+                          </p>
                         </div>
                       </div>
                     </div>

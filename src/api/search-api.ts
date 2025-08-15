@@ -19,6 +19,7 @@ export interface SearchResult {
   Original_Price: number;
   Discount_Rate?: number;
   Product_Name?: string;
+  elements: string[];
 }
 
 // 검색 응답 타입 정의

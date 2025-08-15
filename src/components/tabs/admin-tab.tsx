@@ -5,6 +5,7 @@ import { uploadSingleExcel, uploadMultipleExcel, getSupportedFiles } from '@/api
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface SupportedFiles {
   supported_files: string[];
@@ -118,7 +119,7 @@ export function AdminTab() {
             >
               {isLoading ? '업로드 중...' : '파일 선택'}
             </Button>
-            <input
+            <Input
               ref={singleFileInputRef}
               type="file"
               accept=".xlsx,.xls"
@@ -137,15 +138,15 @@ export function AdminTab() {
             >
               {isLoading ? '업로드 중...' : '파일들 선택'}
             </Button>
-            <Label className="flex items-center gap-2 text-sm text-gray-600">
+            <Label className="flex items-center gap-2 text-sm text-gray-600 pl-1">
               <Checkbox
                 checked={clearTables}
                 onCheckedChange={(checked) => setClearTables(checked as boolean)}
                 className="h-4 w-4 pb-1 data-[state=checked]:bg-gray-600 data-[state=checked]:border-gray-600 data-[state=checked]:text-white"
               />
-              기존 데이터 삭제 후 업로드
+              <span className='pr-2 pt-0.5'>기존 데이터 삭제 후 업로드</span>
             </Label>
-            <input
+            <Input
               ref={multipleFileInputRef}
               type="file"
               accept=".xlsx,.xls"
