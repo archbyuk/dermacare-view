@@ -30,7 +30,7 @@ export function TreatmentListTab() {
   
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('latest');
-  const itemsPerPage = 20;
+  const itemsPerPage = 100; // 더 많은 아이템을 한 번에 표시
   
   // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +46,12 @@ export function TreatmentListTab() {
         page: 1,
         page_size: 1000, // 충분히 큰 값으로 전체 데이터 요청
         product_type: 'all'
+      });
+      
+      console.log('API 응답:', {
+        totalCount: response.data.length,
+        pagination: response.pagination,
+        allData: response.data
       });
       
       setState(prev => ({
@@ -160,13 +166,12 @@ export function TreatmentListTab() {
   // 필터링/정렬 변경 시 displayedTreatments 업데이트
   useEffect(() => {
     const filtered = filteredAndSortedTreatments();
-    const initialItems = filtered.slice(0, itemsPerPage);
     
     setState(prev => ({
       ...prev,
-      displayedTreatments: initialItems,
+      displayedTreatments: filtered, // 전체 데이터 표시
       currentPage: 1,
-      hasMore: initialItems.length < filtered.length
+      hasMore: false // 더 이상 로드할 필요 없음
     }));
   }, [filteredAndSortedTreatments]);
 
@@ -254,7 +259,7 @@ export function TreatmentListTab() {
           {!state.loading && !state.error && state.displayedTreatments.length > 0 && (
             <div>
               <h3 className="text-md font-medium text-gray-900 mb-3">
-                총 시술 개수: {filteredAndSortedTreatments().length}개
+                총 상품 개수: {filteredAndSortedTreatments().length}개
               </h3>
               
               <div className="space-y-1">

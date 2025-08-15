@@ -156,7 +156,7 @@ export function SearchTab() {
   };
 
   return (
-    <div className="pb-20">
+    <div className="pb-20 px-4">
       {/* 검색 입력 */}
       <div className="mb-6">
         <div className="relative">
@@ -165,7 +165,7 @@ export function SearchTab() {
             placeholder="시술명, 분류, 상품명으로 검색..."
             value={state.searchQuery}
             onChange={(e) => setState(prev => ({ ...prev, searchQuery: e.target.value }))}
-            className="w-full px-4 py-3 pl-12"
+            className="w-full px-4 py-3 pl-12 border-gray-300 text-gray-500"
           />
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +177,7 @@ export function SearchTab() {
 
       {/* 필터 및 정렬 */}
       {state.hasSearched && (
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between">
           {/* 카테고리 필터 */}
           <div className="flex gap-2">
             {[
@@ -202,15 +202,15 @@ export function SearchTab() {
 
           {/* 정렬 옵션 */}
           <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
-            <SelectTrigger className="w-28 py-1">
+            <SelectTrigger className="w-32 bg-white text-gray-600 border-gray-300">
               <SelectValue placeholder="정렬 선택" />
             </SelectTrigger>
-            <SelectContent position="popper" side="bottom" align="end" className="w-24 z-10">
-              <SelectItem value="latest" className="text-gray-800 hover:bg-gray-100">최신순</SelectItem>
-              <SelectItem value="oldest" className="text-gray-800 hover:bg-gray-100">오래된순</SelectItem>
-              <SelectItem value="price_high" className="text-gray-800 hover:bg-gray-100">가격 높은순</SelectItem>
-              <SelectItem value="price_low" className="text-gray-800 hover:bg-gray-100">가격 낮은순</SelectItem>
-              <SelectItem value="name" className="text-gray-800 hover:bg-gray-100">이름순</SelectItem>
+            <SelectContent className="w-24 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+              <SelectItem value="latest" className="text-gray-500 hover:bg-white border-gray-300">최신순</SelectItem>
+              <SelectItem value="oldest" className="text-gray-500 hover:bg-white border-gray-300">오래된순</SelectItem>
+              <SelectItem value="price_high" className="text-gray-500 hover:bg-white border-gray-300">가격 높은순</SelectItem>
+              <SelectItem value="price_low" className="text-gray-500 hover:bg-white border-gray-300">가격 낮은순</SelectItem>
+              <SelectItem value="name" className="text-gray-500 hover:bg-white border-gray-300">이름순</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -234,7 +234,7 @@ export function SearchTab() {
       {/* 검색 결과 */}
       {state.hasSearched && !state.loading && (
         <Card className="border-none shadow-none">
-          <CardContent className="px-6 py-2">
+          <CardContent className="px-3 py-2">
             <div className="mb-4">
               <h3 className="text-md font-medium text-gray-900 mb-3">
                 검색 결과: {state.pagination.total_count}개

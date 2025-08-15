@@ -49,6 +49,7 @@ export interface ProductDetail {
   Event_End_Date?: string;
   Product_Name?: string;
   Product_Description?: string;
+  Precautions?: string;
   element_details?: ElementDetails;
   bundle_name?: string;
   bundle_details?: BundleDetail[];
@@ -87,7 +88,7 @@ export interface CustomDetail {
 
 export interface SequenceDetail {
   Step_Num: number;
-  elements: (ElementDetails & { Custom_Count?: number; Element_Limit?: number })[];
+  elements: (ElementDetails & { Custom_Count?: number; Element_Limit?: number; Element_Cost?: number })[];
 }
 
 export interface ProductDetailResponse {
