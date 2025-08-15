@@ -264,8 +264,21 @@ export function SearchTab() {
                             {treatment.Product_Name || `시술 ${treatment.ID}`}
                           </h4>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full min-w-fit">
-                              {treatment.Package_Type}
+                            <span className={`text-xs px-2 py-0.5 rounded-full min-w-fit ${
+                              treatment.Package_Type === '단일시술' 
+                                ? 'bg-gray-100 text-gray-600' 
+                                : treatment.Package_Type === '번들'
+                                ? 'bg-orange-50 text-orange-400'
+                                : treatment.Package_Type === '시퀀스'
+                                ? 'bg-purple-50 text-purple-400'
+                                : treatment.Package_Type === '커스텀'
+                                ? 'bg-red-50 text-red-400'
+                                : 'bg-gray-100 text-gray-400'
+                            }`}>
+                              {treatment.Package_Type === '단일시술' ? '단일시술' : 
+                              treatment.Package_Type === '번들' ? '패키지' :
+                              treatment.Package_Type === '시퀀스' ? '코스 패키지' :
+                              treatment.Package_Type === '커스텀' ? '커스텀' : treatment.Package_Type}
                             </span>
                             {treatment.elements && treatment.elements.length > 0 && (
                               <span className="text-xs text-gray-500 truncate">
