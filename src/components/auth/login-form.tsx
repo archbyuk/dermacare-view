@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,17 +10,17 @@ import { Checkbox } from '@/components/ui/checkbox';
 // 추후 zod, react-hook-form 적용 예정
 
 interface LoginFormProps {
-  onSubmit: (name: string, password: string) => void;
+  onSubmit: (username: string, password: string) => void;
   isLoading?: boolean;
 }
 
 export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(name, password);
+    onSubmit(username, password);
   };
 
   return (
@@ -34,17 +36,17 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
       <CardContent className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* 이름 입력 */}
+          {/* 사용자명 입력 */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
-              이름
+            <Label htmlFor="username" className="text-sm font-semibold text-gray-700">
+              사용자명
             </Label>
             <Input
-              id="name"
+              id="username"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="이름을 입력하세요"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="사용자명을 입력하세요"
               required
               disabled={isLoading}
               className="h-12 text-sm text-gray-700 border-1 border-gray-200 focus:border-gray-500 focus:ring-0 transition-colors placeholder:text-gray-400 rounded-lg"

@@ -1,13 +1,15 @@
 import axios from 'axios';
 
+// AWS 서버 URL로 강제 설정
+const API_BASE_URL = '/api/backend';
+
 const instance = axios.create({
-  // baseURL: `http://localhost:9000`, // 실제 서버 URL로 변경 예정
-  // baseURL: `http://public-api.dermacare.com`,
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: API_BASE_URL,  
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true, // 쿠키 주고받기 위해 필요
+  timeout: 10000, // 10초 타임아웃 추가
 });
 
 // 서버사이드와 클라이언트사이드 모두에서 토큰을 헤더에 추가
@@ -24,6 +26,17 @@ instance.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+// 에러 인터셉터 추가
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.message);
+    console.error('Status:', error.response?.status);
+    console.error('URL:', error.config?.url);
+    return Promise.reject(error);
+  }
+);
 
 // 클라이언트에서 쿠키를 가져오는 함수
 export function getCookie(name: string): string | null {
