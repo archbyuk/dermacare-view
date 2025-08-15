@@ -54,6 +54,8 @@ export function TreatmentListTab() {
         allData: response.data
       });
       
+      console.log('시술 목록 API 응답:', response.data);
+      
       setState(prev => ({
         ...prev,
         allTreatments: response.data,
@@ -278,10 +280,10 @@ export function TreatmentListTab() {
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full min-w-fit">
                             {treatment.Package_Type}
                           </span>
-                          {treatment.procedure_names.length > 0 && (
+                          {treatment.class_types && treatment.class_types.length > 0 && (
                             <span className="text-xs text-gray-500 truncate">
-                              #{treatment.procedure_names.slice(0, 3).join(' #')}
-                              {treatment.procedure_names.length > 2 && '...'}
+                              #{treatment.class_types.slice(0, 3).join(' #')}
+                              {treatment.class_types.length > 3 && '...'}
                             </span>
                           )}
                         </div>
