@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-// AWS 서버 URL로 강제 설정
-const API_BASE_URL = "/api";
-
 const instance = axios.create({
-  baseURL: API_BASE_URL,  
+  baseURL:  process.env.NEXT_PUBLIC_API_BASE_URL,  
   headers: {
     'Content-Type': 'application/json',
   },
