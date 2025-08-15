@@ -39,6 +39,9 @@ export function TreatmentDetailModal({
         product_type: productType
       });
       
+      // 받아온 상세 데이터 로깅 (개발용)
+      // console.log('시술 상세 모달에서 받은 데이터:', response.data);
+      
       setDetail(response.data);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : '상세 정보를 불러오는데 실패했습니다.';
@@ -133,8 +136,8 @@ export function TreatmentDetailModal({
               {/* 시술 정보 */}
               {detail.bundle_name && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">시술 묶음</h4>
-                  <p className="text-sm text-gray-600">{detail.bundle_name}</p>
+                  <h4 className="font-medium text-gray-900 mb-2">패키지</h4>
+                  <p className="text-sm text-gray-600 pl-3">{detail.bundle_name}</p>
                 </div>
               )}
 
@@ -148,15 +151,15 @@ export function TreatmentDetailModal({
                   </div>
               )}
 
-              {/* 시술 상세 정보 */}
+              {/* 번들 시술 상세 정보 */}
               {detail.bundle_details && detail.bundle_details.length > 0 && (
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">포함 시술</h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {detail.bundle_details.map((bundle, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
+                      <div key={index} className="flex items-center justify-between text-xs pl-3">
                         <span className="text-gray-700">{bundle.Element_Info?.Name}</span>
-                        <span className="text-gray-500">{bundle.Element_Cost}회</span>
+                        <span className="text-gray-500">{bundle.Element_Cost?.toLocaleString()}원</span>
                       </div>
                     ))}
                   </div>
@@ -167,11 +170,16 @@ export function TreatmentDetailModal({
               {detail.custom_details && detail.custom_details.length > 0 && (
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">커스텀 시술 상세</h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {detail.custom_details.map((custom, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm pl-3">
+                      <div key={index} className="flex items-center justify-between text-xs pl-3">
                         <span className="text-gray-700">{custom.Element_Info?.Name}</span>
-                        <span className="text-gray-500">{custom.Element_Limit ? `최대 ${custom.Element_Limit}회` : '제한없음'}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-500">{custom.Element_Cost?.toLocaleString()}원</span>
+                          <span className="text-xs text-gray-400">
+                            {custom.Element_Limit ? `최대 ${custom.Element_Limit}회` : '제한없음'}
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -181,7 +189,7 @@ export function TreatmentDetailModal({
               {/* 시퀀스 시술 상세 정보 */}
               {detail.sequence_details && detail.sequence_details.length > 0 && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">시퀀스 시술</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">코스 패키지</h4>
                   <div className="space-y-3">
                     {detail.sequence_details.map((sequence, index) => (
                       <div key={index} className="border-l-2 border-gray-300 pl-3">
@@ -190,9 +198,9 @@ export function TreatmentDetailModal({
                           {sequence.elements.map((element, elemIndex) => (
                             <div key={elemIndex} className="flex items-center justify-between text-xs">
                               <span className="text-gray-600">{element.Name}</span>
-                              {element.Custom_Count && (
-                                <span className="text-gray-500">{element.Custom_Count}/{element.Element_Limit}회</span>
-                              )}
+                              <span className="text-gray-500">
+                                {element.Element_Cost ? `${element.Element_Cost.toLocaleString()}원` : '가격 정보 없음'}
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -209,35 +217,35 @@ export function TreatmentDetailModal({
                   <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">시술명</span>
-                      <span className="text-gray-900">{detail.element_details.Name}</span>
+                      <span className="text-gray-900">{detail.element_details.Name || '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">대분류</span>
-                      <span className="text-gray-900">{detail.element_details.Class_Major}</span>
+                      <span className="text-gray-900">{detail.element_details.Class_Major || '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">중분류</span>
-                      <span className="text-gray-900">{detail.element_details.Class_Sub}</span>
+                      <span className="text-gray-900">{detail.element_details.Class_Sub || '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">소분류</span>
-                      <span className="text-gray-900">{detail.element_details.Class_Detail}</span>
+                      <span className="text-gray-900">{detail.element_details.Class_Detail || '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">시술 타입</span>
-                      <span className="text-gray-900">{detail.element_details.Class_Type}</span>
+                      <span className="text-gray-900">{detail.element_details.Class_Type || '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">소요시간</span>
-                      <span className="text-gray-900">{detail.element_details.Cost_Time}분</span>
+                      <span className="text-gray-900">{detail.element_details.Cost_Time ? `${detail.element_details.Cost_Time}분` : '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">티켓팅 여부</span>
-                      <span className="text-gray-900">{detail.element_details.Plan_State === '1' ? 'O' : 'X'}</span>
+                      <span className="text-gray-900">{detail.element_details.Plan_State ? (detail.element_details.Plan_State === '1' ? 'O' : 'X') : '-'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">티켓팅 횟수</span>
-                      <span className="text-gray-900">{detail.element_details.Plan_Count}회</span>
+                      <span className="text-gray-900">{detail.element_details.Plan_Count ? `${detail.element_details.Plan_Count}회` : '-'}</span>
                     </div>
                   </div>
                 </div>
@@ -271,13 +279,25 @@ export function TreatmentDetailModal({
                 </div>
               )}
 
-              {/* 시술 설명 - 맨 아래로 이동 */}
+              {/* 시술 설명 */}
               {detail.Product_Description && (
                 <div>
                   <h4 className="text-md font-medium text-gray-900 mb-2">시술 설명</h4>
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-sm text-gray-600 leading-relaxed">
                       {detail.Product_Description}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* 주의사항 */}
+              {detail.Precautions && (
+                <div>
+                  <h4 className="text-md font-medium text-gray-900 mb-2">주의사항</h4>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-sm text-red-700 leading-relaxed">
+                      {detail.Precautions}
                     </p>
                   </div>
                 </div>

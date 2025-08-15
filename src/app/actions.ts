@@ -127,14 +127,14 @@ export async function logoutAction() {
     // 쿠키 삭제
     await clearAuthCookies();
     
-    // 로그인 페이지로 리다이렉트
-    redirect('/auth');
+    return { success: true };
   } catch (error: unknown) {
     console.error('Logout error:', error);
     
     // 에러가 발생해도 쿠키는 삭제
     await clearAuthCookies();
-    redirect('/auth');
+    
+    return { success: false, error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' };
   }
 }
 

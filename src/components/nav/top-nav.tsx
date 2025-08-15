@@ -1,6 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 import { logoutAction } from '@/app/actions';
+import { Button } from '@/components/ui/button';
 
 interface TopNavProps {
   activeTab: string;
@@ -22,12 +26,34 @@ const tabInfo = {
 };
 
 export function TopNav({ activeTab }: TopNavProps) {
+  const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleLogout = async () => {
     try {
-      await logoutAction();
+      const result = await logoutAction();
+      
+      if (result.success) {
+        // 로그아웃 성공 시 로그인 페이지로 리다이렉트
+        router.push('/auth');
+      } else {
+        // 에러가 발생해도 쿠키는 삭제되었으므로 로그인 페이지로 리다이렉트
+        console.error('로그아웃 에러:', result.error);
+        router.push('/auth');
+      }
     } catch (error) {
       console.error('로그아웃 에러:', error);
+      // 에러가 발생해도 로그인 페이지로 리다이렉트
+      router.push('/auth');
     }
+  };
+
+  const openLogoutModal = () => {
+    setShowLogoutModal(true);
+  };
+
+  const closeLogoutModal = () => {
+    setShowLogoutModal(false);
   };
 
   const currentTab = tabInfo[activeTab as keyof typeof tabInfo];
@@ -47,17 +73,50 @@ export function TopNav({ activeTab }: TopNavProps) {
           </div>
 
           {/* 로그아웃 버튼 */}
-          <button
-            onClick={handleLogout}
-            className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          <Button
+            onClick={openLogoutModal}
+            variant="ghost"
+            size="sm"
+            className="ml-4 text-gray-400 hover:text-gray-600"
             title="로그아웃"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
+            <LogOut className="w-8 h-8" />
+          </Button>
         </div>
       </div>
+
+      {/* 로그아웃 Confirm 모달 */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-[70vw] shadow-xl mx-4">
+            <div className="flex items-center mb-4">
+              <LogOut className="w-6 h-6 text-red-500 mr-3" />
+              <h3 className="text-lg font-medium text-gray-900">로그아웃</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">
+              정말 로그아웃하시겠습니까?
+            </p>
+            <div className="flex gap-3">
+              <Button
+                onClick={closeLogoutModal}
+                variant="outline"
+                className="flex-1 text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400"
+              >
+                취소
+              </Button>
+              <Button
+                onClick={() => {
+                  handleLogout();
+                  closeLogoutModal();
+                }}
+                className="flex-1 bg-red-500 hover:bg-red-600"
+              >
+                로그아웃
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
