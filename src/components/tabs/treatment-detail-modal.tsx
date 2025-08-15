@@ -108,6 +108,14 @@ export function TreatmentDetailModal({
               </div>
 
               {/* 가격 정보 */}
+              {detail.Original_Price && detail.Original_Price > detail.Sell_Price && (
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-sm text-gray-600">기존가</span>
+                  <span className="text-sm text-gray-400 line-through">
+                    {detail.Original_Price.toLocaleString()}원
+                  </span>
+                </div>
+              )}
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">판매가</span>
@@ -115,14 +123,6 @@ export function TreatmentDetailModal({
                     {detail.Sell_Price?.toLocaleString()}원
                   </span>
                 </div>
-                {detail.Original_Price && detail.Original_Price > detail.Sell_Price && (
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-sm text-gray-600">원가</span>
-                    <span className="text-sm text-gray-400 line-through">
-                      {detail.Original_Price.toLocaleString()}원
-                    </span>
-                  </div>
-                )}
                 {detail.Discount_Rate && detail.Discount_Rate > 0 && (
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-sm text-gray-600">할인율</span>
@@ -193,7 +193,7 @@ export function TreatmentDetailModal({
                   <div className="space-y-3">
                     {detail.sequence_details.map((sequence, index) => (
                       <div key={index} className="border-l-2 border-gray-300 pl-3">
-                        <h5 className="text-sm font-medium text-gray-800 mb-1">Step {sequence.Step_Num}</h5>
+                        <h5 className="text-sm font-medium text-gray-800 mb-1">{sequence.Step_Num} 회차</h5>
                         <div className="space-y-1">
                           {sequence.elements.map((element, elemIndex) => (
                             <div key={elemIndex} className="flex items-center justify-between text-xs">
