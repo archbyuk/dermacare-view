@@ -48,14 +48,6 @@ export function TreatmentListTab() {
         product_type: 'all'
       });
       
-      console.log('API 응답:', {
-        totalCount: response.data.length,
-        pagination: response.pagination,
-        allData: response.data
-      });
-      
-      console.log('시술 목록 API 응답:', response.data);
-      
       setState(prev => ({
         ...prev,
         allTreatments: response.data,

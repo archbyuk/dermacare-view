@@ -72,8 +72,6 @@ export function SearchTab() {
         page_size: 30
       });
 
-      console.log('검색 결과:', response);
-
       setState(prev => ({
         ...prev,
         searchResults: response.data,
