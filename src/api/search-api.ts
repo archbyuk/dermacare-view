@@ -20,6 +20,8 @@ export interface SearchResult {
   Discount_Rate?: number;
   Product_Name?: string;
   elements: string[];
+  class_types: string[];
+  class_type_count: number;
 }
 
 // 검색 응답 타입 정의

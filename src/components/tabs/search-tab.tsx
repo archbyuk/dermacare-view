@@ -271,8 +271,8 @@ export function SearchTab() {
                             </span>
                             {treatment.elements && treatment.elements.length > 0 && (
                               <span className="text-xs text-gray-500 truncate">
-                                #{treatment.elements.slice(0, 2).join(' #')}
-                                {treatment.elements.length > 3 && '...'}
+                                #{[...new Set(treatment.elements)].slice(0, 3).join(' #')}
+                                {[...new Set(treatment.elements)].length > 3 && '...'}
                               </span>
                             )}
                           </div>

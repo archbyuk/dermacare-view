@@ -66,7 +66,7 @@ export function TreatmentDetailModal({
             size="sm"
             className="text-gray-400 hover:text-gray-600 p-0 h-auto"
           >
-            
+            {/* 여기 수정의 여지가 있음 */}
           </Button>
         </div>
 
@@ -102,12 +102,17 @@ export function TreatmentDetailModal({
                   }`}>
                     {detail.Product_Type === 'standard' ? '기본 시술' : '이벤트 시술'}
                   </span>
-                  <span>||</span>
-                  <span>{detail.Package_Type}</span>
+                  <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+                    {detail.Package_Type === '단일시술' ? '단일시술' : 
+                     detail.Package_Type === '번들' ? '패키지' :
+                     detail.Package_Type === '시퀀스' ? '코스 패키지' :
+                     detail.Package_Type === '커스텀' ? '커스텀' : detail.Package_Type}
+                  </span>
                 </div>
               </div>
 
               {/* 가격 정보 */}
+              <div className="bg-gray-50 rounded-lg p-3">
               {detail.Original_Price && detail.Original_Price > detail.Sell_Price && (
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-sm text-gray-600">기존가</span>
@@ -116,7 +121,6 @@ export function TreatmentDetailModal({
                   </span>
                 </div>
               )}
-              <div className="bg-gray-50 rounded-lg p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">판매가</span>
                   <span className="text-lg font-semibold text-gray-900">

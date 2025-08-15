@@ -15,6 +15,8 @@ export interface Product {
   Product_Description?: string;
   procedure_names: string[];
   procedure_count: number;
+  class_types: string[];
+  class_type_count: number;
 }
 
 export interface PaginationInfo {
