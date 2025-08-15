@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: `http://localhost:9000`, // 실제 서버 URL로 변경 예정
+  // baseURL: `http://localhost:9000`, // 실제 서버 URL로 변경 예정
   // baseURL: `http://public-api.dermacare.com`,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
