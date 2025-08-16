@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
-import { logoutAction } from '@/app/actions';
+import { logoutAction, clearClientStorage } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 
 interface TopNavProps {
@@ -34,16 +34,21 @@ export function TopNav({ activeTab }: TopNavProps) {
       const result = await logoutAction();
       
       if (result.success) {
+        // 클라이언트 사이드 저장소도 정리
+        clearClientStorage();
+        
         // 로그아웃 성공 시 로그인 페이지로 리다이렉트
         router.push('/auth');
       } else {
-        // 에러가 발생해도 쿠키는 삭제되었으므로 로그인 페이지로 리다이렉트
+        // 에러가 발생해도 클라이언트 저장소는 정리
+        clearClientStorage();
         console.error('로그아웃 에러:', result.error);
         router.push('/auth');
       }
     } catch (error) {
       console.error('로그아웃 에러:', error);
-      // 에러가 발생해도 로그인 페이지로 리다이렉트
+      // 에러가 발생해도 클라이언트 저장소는 정리
+      clearClientStorage();
       router.push('/auth');
     }
   };
