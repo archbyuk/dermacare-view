@@ -7,34 +7,10 @@ export async function middleware(request: NextRequest) {
   
   let isAuthenticated = !!accessToken
   
-  // 모든 경로에서 access_token이 없지만 refresh_token이 있는 경우 토큰 갱신 시도
-  // (treatment_list, auth, 기타 모든 페이지에서 동작)
-  if (!accessToken && refreshToken) {
-    try {
-      // 기존 refreshTokenAction 사용 (쿠키에서 직접 refresh_token 읽어옴)
-      const result = await refreshTokenAction()
-      
-      if (result.success) {
-        // 토큰 갱신 성공 시 인증된 상태로 처리
-        isAuthenticated = true
-        
-        // 토큰 갱신 성공, 새로운 응답 생성
-        const newResponse = NextResponse.next()
-        
-        // 새로운 토큰을 쿠키에 설정 (Server Action에서 이미 설정됨)
-        // 여기서는 응답만 반환
-        return newResponse
-      }
-    } catch (error) {
-      // 토큰 갱신 실패 시 무시하고 계속 진행
-      console.error('Token refresh failed:', error)
-    }
-  }
-  
   // 보호된 경로들 (인증 필요)
   const protectedPaths = ['/']
-  const isProtectedPath = protectedPaths.some(path =>
-    request.nextUrl.pathname.startsWith(path)
+  const isProtectedPath = protectedPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path) && request.nextUrl.pathname !== '/auth'
   )
   
   // 인증된 사용자가 접근할 수 없는 경로들 (로그인 페이지 등)
@@ -42,7 +18,41 @@ export async function middleware(request: NextRequest) {
   const isAuthPath = authPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   )
-
+  
+  // access_token이 없지만 refresh_token이 있는 경우에만 토큰 갱신 시도
+  if (!accessToken && refreshToken && (isProtectedPath || isAuthPath)) {
+    try {
+      const result = await refreshTokenAction()
+      
+      if (result.success) {
+        // 토큰 갱신 성공 - refreshTokenAction에서 이미 쿠키를 설정했으므로
+        // 단순히 리다이렉트만 처리
+        isAuthenticated = true
+        
+        if (isAuthPath) {
+          // /auth 페이지에서 토큰 갱신 성공 시 홈으로 리다이렉트
+          return NextResponse.redirect(new URL('/', request.url))
+        }
+        // 보호된 경로에서는 계속 진행
+      }
+    } catch (error) {
+      console.error('Token refresh failed:', error)
+      // 토큰 갱신 실패 시 토큰들 삭제
+      if (isProtectedPath) {
+        const response = NextResponse.redirect(new URL('/auth', request.url))
+        response.cookies.delete('access_token')
+        response.cookies.delete('refresh_token')
+        return response
+      }
+    }
+  }
+  
+  // 갱신된 토큰이 있다면 인증 상태 업데이트
+  if (!accessToken && refreshToken) {
+    // refresh_token만 있는 경우는 아직 인증되지 않은 것으로 처리
+    isAuthenticated = false
+  }
+  
   // 보호된 경로에 접근하려는데 토큰이 없는 경우
   if (isProtectedPath && !isAuthenticated) {
     return NextResponse.redirect(new URL('/auth', request.url))
@@ -52,7 +62,7 @@ export async function middleware(request: NextRequest) {
   if (isAuthPath && isAuthenticated) {
     return NextResponse.redirect(new URL('/', request.url))
   }
-
+  
   return NextResponse.next()
 }
 
