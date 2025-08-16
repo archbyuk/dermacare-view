@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 // 추후 zod, react-hook-form 적용 예정
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string, rememberMe: boolean) => void;
+  onSubmit: (username: string, password: string) => void;
   isLoading?: boolean;
 }
 
@@ -21,7 +21,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(username, password, rememberMe);
+    onSubmit(username, password);
   };
 
   return (
