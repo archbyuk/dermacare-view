@@ -156,7 +156,7 @@ export function SearchTab() {
   };
 
   return (
-    <div className="pb-20 px-4">
+    <div className="pb-20 px-7">
       {/* 검색 입력 */}
       <div className="mb-6">
         <div className="relative">
@@ -179,21 +179,22 @@ export function SearchTab() {
       {state.hasSearched && (
         <div className="mb-2 flex items-center justify-between">
           {/* 카테고리 필터 */}
-          <div className="flex gap-2">
+          <div className="flex gap-1 overflow-x-auto">
             {[
-              { value: 'all' as const, label: '전체' },
-              { value: 'standard' as const, label: '일반' },
+              { value: 'all' as const, label: 'ALL' },
+              { value: 'standard' as const, label: '스탠다드' },
               { value: 'event' as const, label: '이벤트' }
             ].map((category) => (
               <Button
                 key={category.value}
-                variant={selectedCategory === category.value ? "default" : "outline"}
-                size="sm"
+                variant="outline"
+                size="default"
                 onClick={() => setSelectedCategory(category.value)}
-                className={selectedCategory === category.value 
-                  ? "bg-gray-500 text-white hover:bg-gray-200" 
-                  : "bg-white text-gray-600 hover:bg-gray-200 hover:text-white border-gray-400"
-                }
+                className={`whitespace-nowrap py-0 px-1.5 transition-colors ${
+                  selectedCategory === category.value 
+                    ? 'bg-gray-400 text-white hover:bg-gray-200' 
+                    : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-white border-gray-300'
+                }`}
               >
                 {category.label}
               </Button>
@@ -202,15 +203,15 @@ export function SearchTab() {
 
           {/* 정렬 옵션 */}
           <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
-            <SelectTrigger className="w-32 bg-white text-gray-600 border-gray-300">
+            <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
               <SelectValue placeholder="정렬 선택" />
             </SelectTrigger>
-            <SelectContent className="w-24 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
-              <SelectItem value="latest" className="text-gray-500 hover:bg-white border-gray-300">최신순</SelectItem>
-              <SelectItem value="oldest" className="text-gray-500 hover:bg-white border-gray-300">오래된순</SelectItem>
-              <SelectItem value="price_high" className="text-gray-500 hover:bg-white border-gray-300">가격 높은순</SelectItem>
-              <SelectItem value="price_low" className="text-gray-500 hover:bg-white border-gray-300">가격 낮은순</SelectItem>
-              <SelectItem value="name" className="text-gray-500 hover:bg-white border-gray-300">이름순</SelectItem>
+            <SelectContent className="w-16 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+              <SelectItem value="latest" className="w-full text-gray-500 hover:bg-white border-gray-300 text-xs">최신순</SelectItem>
+              <SelectItem value="oldest" className="w-full text-gray-500 hover:bg-white border-gray-300 text-xs">오래된순</SelectItem>
+              <SelectItem value="price_high" className="w-full text-gray-500 hover:bg-white border-gray-300 text-xs">가격 높은순</SelectItem>
+              <SelectItem value="price_low" className="w-full text-gray-500 hover:bg-white border-gray-300 text-xs">가격 낮은순</SelectItem>
+              <SelectItem value="name" className="w-full text-gray-500 hover:bg-white border-gray-300 text-xs">이름순</SelectItem>
             </SelectContent>
           </Select>
         </div>

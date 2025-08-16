@@ -54,8 +54,8 @@ export function TreatmentDetailModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-hidden">
-      <div className="bg-white rounded-lg w-full max-w-md h-[80vh] flex flex-col shadow-xl">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-hidden">
+      <div className="bg-white rounded-xl w-full max-w-md h-[80vh] flex flex-col shadow-2xl border border-gray-200">
         
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -180,9 +180,6 @@ export function TreatmentDetailModal({
                         <span className="text-gray-700">{custom.Element_Info?.Name}</span>
                         <div className="flex items-center space-x-2">
                           <span className="text-gray-500">{custom.Element_Cost?.toLocaleString()}원</span>
-                          <span className="text-xs text-gray-400">
-                            {custom.Element_Limit ? `최대 ${custom.Element_Limit}회` : '제한없음'}
-                          </span>
                         </div>
                       </div>
                     ))}
@@ -196,12 +193,12 @@ export function TreatmentDetailModal({
                   <h4 className="font-medium text-gray-900 mb-2">코스 패키지</h4>
                   <div className="space-y-3">
                     {detail.sequence_details.map((sequence, index) => (
-                      <div key={index} className="border-l-2 border-gray-300 pl-3">
+                      <div key={index} className="border-l-2 border-gray-300 pl-3 mb-2">
                         <h5 className="text-sm font-medium text-gray-800 mb-1">{sequence.Step_Num} 회차</h5>
                         <div className="space-y-1">
                           {sequence.elements.map((element, elemIndex) => (
                             <div key={elemIndex} className="flex items-center justify-between text-xs">
-                              <span className="text-gray-600">{element.Name}</span>
+                              <span className="text-gray-600 mb-1">{element.Name}</span>
                               <span className="text-gray-500">
                                 {element.Element_Cost ? `${element.Element_Cost.toLocaleString()}원` : '가격 정보 없음'}
                               </span>
@@ -315,7 +312,7 @@ export function TreatmentDetailModal({
         <div className="p-4 border-gray-200 flex-shrink-0">
           <Button
             onClick={onClose}
-            className="w-full bg-gray-500 py-2"
+            className="w-full bg-gray-500 py-5 font-semibold"
             variant="secondary"
           >
             닫기

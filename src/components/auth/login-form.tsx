@@ -10,17 +10,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 // 추후 zod, react-hook-form 적용 예정
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
+  onSubmit: (username: string, password: string, rememberMe: boolean) => void;
   isLoading?: boolean;
 }
 
 export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(username, password);
+    onSubmit(username, password, rememberMe);
   };
 
   return (
@@ -43,12 +44,14 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
             </Label>
             <Input
               id="username"
+              name="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="사용자명을 입력하세요"
               required
               disabled={isLoading}
+              autoComplete={rememberMe ? "username" : "off"}
               className="h-12 text-sm text-gray-700 border-1 border-gray-200 focus:border-gray-500 focus:ring-0 transition-colors placeholder:text-gray-400 rounded-lg"
             />
           </div>
@@ -60,28 +63,32 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
             </Label>
             <Input
               id="password"
+              name="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력하세요"
               required
               disabled={isLoading}
+              autoComplete={rememberMe ? "current-password" : "off"}
               className="h-12 text-sm text-gray-700 border-1 border-gray-200 focus:border-gray-500 focus:ring-0 transition-colors placeholder:text-gray-400 rounded-lg"
             />
           </div>
 
           <div className="flex items-center justify-between text-xs pt-2">
             <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="remember" 
+              <Checkbox
+                id="remember"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                 disabled={isLoading}
                 className="h-4 w-4 data-[state=checked]:bg-gray-600 data-[state=checked]:border-gray-600 data-[state=checked]:text-white"
               />
               <Label 
                 htmlFor="remember" 
-                className="text-gray-600 font-medium text-xs cursor-pointer"
+                className="text-gray-600 font-medium text-xs cursor-pointer mt-1"
               >
-                로그인 상태 유지
+                로그인 정보 저장
               </Label>
             </div>
             <Button variant="ghost" className="p-0 h-auto text-xs font-semibold text-gray-600 hover:text-gray-800">

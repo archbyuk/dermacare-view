@@ -18,30 +18,34 @@ export async function loginAction(formData: FormData) {
       // 쿠키 설정
       const cookieStore = await cookies();
       
-      // access_token 쿠키 설정
+      // access_token 쿠키 설정 - 기기별 최적화
       cookieStore.set('access_token', response.data.access_token!, {
         httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
         secure: true,
         sameSite: 'lax',
-        maxAge: 3600 // 1시간
+        maxAge: 3600, // 1시간
+        path: '/'
       });
       
-      // refresh_token 쿠키 설정
+      // refresh_token 쿠키 설정 - 기기별 최적화
       if (response.data.refresh_token) {
         cookieStore.set('refresh_token', response.data.refresh_token, {
           httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
           secure: true,
           sameSite: 'lax',
-          maxAge: 7 * 24 * 3600 // 7일
+          maxAge: 7 * 24 * 3600, // 7일
+          path: '/'
         });
       }
       
-      // 성공 결과 반환
+      // 성공 결과 반환 (클라이언트에서 localStorage/sessionStorage 저장을 위해 토큰 포함)
       return { 
         success: true, 
         message: '로그인 성공',
         user_id: response.data.user_id,
-        role: response.data.role 
+        role: response.data.role,
+        access_token: response.data.access_token,
+        refresh_token: response.data.refresh_token
       };
       
     } else {
@@ -134,6 +138,31 @@ export async function logoutAction() {
     await clearAuthCookies();
     
     return { success: false, error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' };
+  }
+}
+
+// 클라이언트 사이드 저장소 정리를 위한 함수
+export async function clearClientStorage() {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    // localStorage 삭제
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('remember_me');
+    
+    // sessionStorage 삭제
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('remember_me');
+    
+    // 쿠키 삭제 (클라이언트 사이드)
+    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    
+    console.log('✅ 클라이언트 저장소가 정리되었습니다.');
+  } catch (error) {
+    console.error('❌ 클라이언트 저장소 정리 실패:', error);
   }
 }
 

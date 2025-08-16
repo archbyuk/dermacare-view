@@ -16,6 +16,12 @@ export async function middleware(request: NextRequest) {
         // 토큰 갱신 성공, 새로운 응답 생성
         const newResponse = NextResponse.next()
         
+        // iOS Safari bfcache 방지를 위한 캐시 헤더 설정
+        newResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+        newResponse.headers.set('Pragma', 'no-cache')
+        newResponse.headers.set('Expires', '0')
+        newResponse.headers.set('Surrogate-Control', 'no-store')
+        
         // 새로운 토큰을 쿠키에 설정 (Server Action에서 이미 설정됨)
         // 여기서는 응답만 반환
         return newResponse
@@ -42,15 +48,39 @@ export async function middleware(request: NextRequest) {
 
   // 보호된 경로에 접근하려는데 토큰이 없는 경우
   if (isProtectedPath && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/auth', request.url))
+    const response = NextResponse.redirect(new URL('/auth', request.url))
+    
+    // iOS Safari bfcache 방지를 위한 캐시 헤더 설정
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    response.headers.set('Surrogate-Control', 'no-store')
+    
+    return response
   }
   
   // 이미 인증된 사용자가 로그인 페이지에 접근하는 경우
   if (isAuthPath && isAuthenticated) {
-    return NextResponse.redirect(new URL('/', request.url))
+    const response = NextResponse.redirect(new URL('/', request.url))
+    
+    // iOS Safari bfcache 방지를 위한 캐시 헤더 설정
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    response.headers.set('Surrogate-Control', 'no-store')
+    
+    return response
   }
 
-  return NextResponse.next()
+  const response = NextResponse.next()
+  
+  // iOS Safari bfcache 방지를 위한 캐시 헤더 설정
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+  response.headers.set('Pragma', 'no-cache')
+  response.headers.set('Expires', '0')
+  response.headers.set('Surrogate-Control', 'no-store')
+
+  return response
 }
 
 export const config = {

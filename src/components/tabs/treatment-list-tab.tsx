@@ -170,9 +170,9 @@ export function TreatmentListTab() {
   }, [filteredAndSortedTreatments]);
 
   const categories = [
-    { id: 'all', label: '전체' },
-    { id: 'standard', label: '기본시술' },
-    { id: 'event', label: '이벤트시술' }
+    { id: 'all', label: 'ALL' },
+    { id: 'standard', label: '스탠다드' },
+    { id: 'event', label: '이벤트' }
   ];
 
   const sortOptions = [
@@ -183,7 +183,7 @@ export function TreatmentListTab() {
   ];
 
   return (
-    <div>
+    <div className="px-3">
       {/* 카테고리 탭 */}
       <div className="flex items-center justify-between mx-4">
         <div className="flex items-center justify-between w-full gap-5">
@@ -194,7 +194,7 @@ export function TreatmentListTab() {
                 variant="outline"
                 size="default"
                 onClick={() => handleCategoryChange(category.id)}
-                className={`whitespace-nowrap py-1 px-3 transition-colors ${
+                className={`whitespace-nowrap py-0 px-1.5 transition-colors ${
                   selectedCategory === category.id 
                     ? 'bg-gray-400 text-white hover:bg-gray-200' 
                     : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-white border-gray-300 '
@@ -206,13 +206,13 @@ export function TreatmentListTab() {
           </div>
           
           <Select value={sortBy} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-32 bg-white text-gray-600 border-gray-300">
+            <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
               <SelectValue placeholder="정렬" />
             </SelectTrigger>
             
-            <SelectContent className="w-24 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+            <SelectContent className="w-16 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
               {sortOptions.map((option) => (
-                <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300">
+                <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
                   {option.label}
                 </SelectItem>
               ))}
