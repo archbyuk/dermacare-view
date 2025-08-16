@@ -7,6 +7,7 @@ import { instance } from '../api/axios-instance';
 export async function loginAction(formData: FormData) {
   const username = formData.get('username') as string;
   const password = formData.get('password') as string;
+  const rememberMe = formData.get('rememberMe') === 'true';
   
   try {
     const response = await instance.post('/auth/login', {
@@ -23,12 +24,13 @@ export async function loginAction(formData: FormData) {
         httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
         secure: true,
         sameSite: 'lax',
-        maxAge: 3600, // 1시간
+        maxAge: 3600, // 10초 (테스트용)
         path: '/'
       });
       
-      // refresh_token 쿠키 설정 - 기기별 최적화
-      if (response.data.refresh_token) {
+      // refresh_token 쿠키 설정 - rememberMe에 따라 조건부 설정
+      if (response.data.refresh_token && rememberMe) {
+        // 로그인 정보 저장 선택 시에만 refresh_token 제공
         cookieStore.set('refresh_token', response.data.refresh_token, {
           httpOnly: false, // 클라이언트에서 접근 가능하도록 false로 설정
           secure: true,
@@ -37,6 +39,7 @@ export async function loginAction(formData: FormData) {
           path: '/'
         });
       }
+      // rememberMe가 false면 refresh_token 설정 안함
       
       // 성공 결과 반환 (클라이언트에서 localStorage/sessionStorage 저장을 위해 토큰 포함)
       return { 
@@ -72,6 +75,7 @@ export async function refreshTokenAction() {
   try {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get('refresh_token')?.value;
+    const rememberMe = cookieStore.get('remember_me')?.value;
     
     if (!refreshToken) {
       throw new Error('리프레시 토큰이 없습니다.');
@@ -87,16 +91,21 @@ export async function refreshTokenAction() {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
-        maxAge: 3600 // 1시간
+        maxAge: 3600
       });
       
       if (response.data.refresh_token) {
-        cookieStore.set('refresh_token', response.data.refresh_token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'lax',
-          maxAge: 7 * 24 * 3600 // 7일
-        });
+        // remember_me 쿠키 상태에 따라 refresh_token 설정
+        if (rememberMe === 'true') {
+          // 로그인 정보 저장이 선택된 경우에만 refresh_token 제공
+          cookieStore.set('refresh_token', response.data.refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 3600 // 7일
+          });
+        }
+        // rememberMe가 false면 refresh_token 설정 안함
       }
       
       // 토큰 정보도 함께 반환

@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = async (username: string, password: string, rememberMe: boolean) => {
     setIsLoading(true);
     setError(null);
     
@@ -20,6 +20,7 @@ export default function LoginPage() {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
+      formData.append('rememberMe', rememberMe.toString());
       
       // Server Action 호출
       const result = await loginAction(formData);
