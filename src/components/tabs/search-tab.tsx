@@ -1,41 +1,39 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { searchProducts, SearchResult } from '@/api/search-api';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { debounce } from 'lodash';
 import { TreatmentDetailModal } from './treatment-detail-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTreatmentsStore } from '@/store/treatments-store';
 import Image from 'next/image';
+
+// 검색 결과 타입 정의 (API 의존성 제거)
+interface SearchResult {
+  ID: number;
+  Product_Type: 'standard' | 'event';
+  Package_Type: string;
+  Sell_Price: number;
+  Original_Price: number;
+  Product_Name?: string;
+  elements: string[];
+  class_types: string[];
+  class_type_count: number;
+}
 
 interface SearchState {
   searchQuery: string;
   searchResults: SearchResult[];
-  loading: boolean;
-  error: string | null;
   hasSearched: boolean;
-  pagination: {
-    page: number;
-    page_size: number;
-    total_count: number;
-    total_pages: number;
-  };
 }
 
 export function SearchTab() {
   const [state, setState] = useState<SearchState>({
     searchQuery: '',
     searchResults: [],
-    loading: false,
-    error: null,
-    hasSearched: false,
-    pagination: {
-      page: 1,
-      page_size: 30,
-      total_count: 0,
-      total_pages: 0
-    }
+    hasSearched: false
   });
 
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'standard' | 'event'>('all');
@@ -45,77 +43,97 @@ export function SearchTab() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTreatment, setSelectedTreatment] = useState<{ id: number; type: 'standard' | 'event' } | null>(null);
 
-  // 검색 실행
-  const handleSearch = useCallback(async (page: number = 1) => {
-    if (!state.searchQuery.trim()) {
+  // Zustand store에서 캐시된 데이터 가져오기
+  const { 
+    treatments, 
+    loading: storeLoading, 
+    error: storeError, 
+    fetchTreatments 
+  } = useTreatmentsStore();
+
+  // 초기 데이터 로드
+  useEffect(() => {
+    fetchTreatments();
+  }, [fetchTreatments]);
+
+  // 클라이언트 사이드 검색 실행
+  const performSearch = useCallback((query: string, category: 'all' | 'standard' | 'event') => {
+    // 최소 2글자 이상일 때만 검색
+    if (!query.trim() || query.trim().length < 1) {
       setState(prev => ({ 
         ...prev, 
         searchResults: [], 
-        hasSearched: false,
-        pagination: {
-          page: 1,
-          page_size: 30,
-          total_count: 0,
-          total_pages: 0
-        }
+        hasSearched: false
       }));
       return;
     }
 
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null, hasSearched: true }));
-      
-      const response = await searchProducts({
-        q: state.searchQuery.trim(),
-        product_type: selectedCategory,
-        page,
-        page_size: 30
-      });
-
-      setState(prev => ({
-        ...prev,
-        searchResults: response.data,
-        loading: false,
-        pagination: response.pagination
-      }));
-    } catch (error: unknown) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : '검색에 실패했습니다.',
-        loading: false
-      }));
-    }
-  }, [state.searchQuery, selectedCategory]);
-
-  // 검색어 변경 시 자동 검색 (디바운싱)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (state.searchQuery.trim()) {
-        handleSearch(1);
-      } else {
-        setState(prev => ({ 
-          ...prev, 
-          searchResults: [], 
-          hasSearched: false,
-          pagination: {
-            page: 1,
-            page_size: 30,
-            total_count: 0,
-            total_pages: 0
-          }
-        }));
+    const searchTerm = query.toLowerCase().trim();
+    
+    // 캐시된 데이터에서 검색 (성능 최적화)
+    const filteredResults = treatments.filter(treatment => {
+      // 카테고리 필터링을 먼저 (더 빠른 필터링)
+      if (category !== 'all' && treatment.Product_Type !== category) {
+        return false;
       }
-    }, 300);
+      
+      // 시술명 검색 (가장 빠른 매칭)
+      if (treatment.Product_Name?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 분류 검색 (class_types)
+      if (treatment.class_types?.some(type => type.toLowerCase().includes(searchTerm))) {
+        return true;
+      }
+      
+      return false;
+    });
 
-    return () => clearTimeout(timer);
-  }, [state.searchQuery, handleSearch]);
+    // SearchResult 타입으로 변환
+    const searchResults: SearchResult[] = filteredResults.map(treatment => ({
+      ID: treatment.ID,
+      Product_Name: treatment.Product_Name,
+      Product_Type: treatment.Product_Type,
+      Package_Type: treatment.Package_Type,
+      Sell_Price: treatment.Sell_Price,
+      Original_Price: treatment.Original_Price,
+      elements: treatment.class_types || [],
+      class_types: treatment.class_types || [],
+      class_type_count: treatment.class_types?.length || 0
+    }));
+
+    setState(prev => ({
+      ...prev,
+      searchResults,
+      hasSearched: true
+    }));
+  }, [treatments]);
+
+  // 디바운스된 검색 함수 (시간 증가)
+  const debouncedSearch = useMemo(
+    () => debounce((query: string, category: 'all' | 'standard' | 'event') => {
+      performSearch(query, category);
+    }, 200),
+    [performSearch]
+  );
+
+  // 검색어 변경 시 디바운스된 검색 실행
+  useEffect(() => {
+    debouncedSearch(state.searchQuery, selectedCategory);
+    
+    // 컴포넌트 언마운트 시 디바운스 취소
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [state.searchQuery, selectedCategory, debouncedSearch]);
 
   // 카테고리 변경 시 검색 재실행
   useEffect(() => {
     if (state.hasSearched && state.searchQuery.trim()) {
-      handleSearch(1);
+      performSearch(state.searchQuery, selectedCategory);
     }
-  }, [selectedCategory, handleSearch, state.hasSearched, state.searchQuery]);
+  }, [selectedCategory, performSearch, state.hasSearched, state.searchQuery]);
 
   // 정렬된 결과 계산 (클라이언트 사이드 정렬)
   const getSortedResults = () => {
@@ -123,10 +141,12 @@ export function SearchTab() {
 
     switch (sortBy) {
       case 'latest':
-        // 서버에서 이미 정렬된 결과를 사용하므로 그대로 반환
+        // ID 기준 최신순 (높은 ID가 최신)
+        results.sort((a, b) => b.ID - a.ID);
         break;
       case 'oldest':
-        results.reverse();
+        // ID 기준 오래된순 (낮은 ID가 오래됨)
+        results.sort((a, b) => a.ID - b.ID);
         break;
       case 'price_high':
         results.sort((a, b) => b.Sell_Price - a.Sell_Price);
@@ -150,13 +170,8 @@ export function SearchTab() {
     setIsModalOpen(true);
   };
 
-  // 페이지 변경
-  const handlePageChange = (newPage: number) => {
-    handleSearch(newPage);
-  };
-
   return (
-    <div className="pb-20 px-7">
+    <div className="pb-20 px-7 slide-in-right">
       {/* 검색 입력 */}
       <div className="mb-6">
         <div className="relative">
@@ -218,7 +233,7 @@ export function SearchTab() {
       )}
 
       {/* 로딩 상태 */}
-      {state.loading && (
+      {(storeLoading) && (
         <div className="text-center py-8">
           <Image src="/symbol_facefilter.svg" alt="로딩" width={32} height={32} className="animate-spin mx-auto mb-4" />
           <p className="text-sm text-gray-600">로딩 중입니다</p>
@@ -226,24 +241,24 @@ export function SearchTab() {
       )}
 
       {/* 에러 메시지 */}
-      {state.error && (
+      {(storeError) && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600 text-sm">{state.error}</p>
+          <p className="text-red-600 text-sm">{storeError}</p>
         </div>
       )}
 
       {/* 검색 결과 */}
-      {state.hasSearched && !state.loading && (
-        <Card className="border-none shadow-none">
+      {state.hasSearched && !storeLoading && (
+        <Card className="border-none shadow-none" key={`search-results-${state.searchQuery}-${selectedCategory}`}>
           <CardContent className="px-3 py-2">
-            <div className="mb-4">
+            <div className="mb-4 slide-up">
               <h3 className="text-md font-medium text-gray-900 mb-3">
-                검색 결과: {state.pagination.total_count}개
+                검색 결과: {sortedResults.length}개
               </h3>
             </div>
 
             {sortedResults.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 slide-up">
                 <div className="w-16 h-11 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <Image src="/symbol_facefilter.svg" alt="검색 결과 없음" width={32} height={32} />
                 </div>
@@ -251,107 +266,64 @@ export function SearchTab() {
                 <p className="text-sm text-gray-500">다른 검색어를 시도해보세요</p>
               </div>
             ) : (
-              <>
-                <div className="space-y-1">
-                  {sortedResults.map((treatment) => (
-                    <div 
-                      key={`${treatment.ID}-${treatment.Product_Type}`}
-                      className="border-b border-gray-100 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => handleTreatmentClick(treatment)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-gray-900 truncate">
-                            {treatment.Product_Name || `시술 ${treatment.ID}`}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className={`text-xs px-2 py-0.5 rounded-full min-w-fit ${
-                              treatment.Package_Type === '단일시술' 
-                                ? 'bg-gray-100 text-gray-600' 
-                                : treatment.Package_Type === '번들'
-                                ? 'bg-orange-50 text-orange-400'
-                                : treatment.Package_Type === '시퀀스'
-                                ? 'bg-purple-50 text-purple-400'
-                                : treatment.Package_Type === '커스텀'
-                                ? 'bg-red-50 text-red-400'
-                                : 'bg-gray-100 text-gray-400'
-                            }`}>
-                              {treatment.Package_Type === '단일시술' ? '단일시술' : 
-                              treatment.Package_Type === '번들' ? '패키지' :
-                              treatment.Package_Type === '시퀀스' ? '코스 패키지' :
-                              treatment.Package_Type === '커스텀' ? '커스텀' : treatment.Package_Type}
+              <div className="space-y-1 slide-up">
+                {sortedResults.map((treatment) => (
+                  <div 
+                    key={`${treatment.ID}-${treatment.Product_Type}`}
+                    className="border-b border-gray-100 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => handleTreatmentClick(treatment)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 truncate">
+                          {treatment.Product_Name || `시술 ${treatment.ID}`}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-xs px-2 py-0.5 rounded-full min-w-fit ${
+                            treatment.Package_Type === '단일시술' 
+                              ? 'bg-gray-100 text-gray-600' 
+                              : treatment.Package_Type === '번들'
+                              ? 'bg-orange-50 text-orange-400'
+                              : treatment.Package_Type === '시퀀스'
+                              ? 'bg-purple-50 text-purple-400'
+                              : treatment.Package_Type === '커스텀'
+                              ? 'bg-red-50 text-red-400'
+                              : 'bg-gray-100 text-gray-400'
+                          }`}>
+                            {treatment.Package_Type === '단일시술' ? '단일시술' : 
+                            treatment.Package_Type === '번들' ? '패키지' :
+                            treatment.Package_Type === '시퀀스' ? '코스 패키지' :
+                            treatment.Package_Type === '커스텀' ? '커스텀' : treatment.Package_Type}
+                          </span>
+                          {treatment.elements && treatment.elements.length > 0 && (
+                            <span className="text-xs text-gray-500 truncate">
+                              #{[...new Set(treatment.elements)].slice(0, 3).join(' #')}
+                              {[...new Set(treatment.elements)].length > 3 && '...'}
                             </span>
-                            {treatment.elements && treatment.elements.length > 0 && (
-                              <span className="text-xs text-gray-500 truncate">
-                                #{[...new Set(treatment.elements)].slice(0, 3).join(' #')}
-                                {[...new Set(treatment.elements)].length > 3 && '...'}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right ml-3 flex-shrink-0">
-                          {treatment.Original_Price > treatment.Sell_Price && (
-                            <p className="text-xs text-gray-400 line-through mb-0.5">
-                              {treatment.Original_Price.toLocaleString()}원
-                            </p>
                           )}
-                          <p className="text-sm font-medium text-gray-900 pr-1.5">
-                            {treatment.Sell_Price.toLocaleString()}원
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 페이지네이션 */}
-                {state.pagination.total_pages > 1 && (
-                  <div className="mt-6 flex justify-center">
-                    <div className="flex gap-2">
-                      {state.pagination.page > 1 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(state.pagination.page - 1)}
-                        >
-                          이전
-                        </Button>
-                      )}
-                      
-                      {Array.from({ length: Math.min(5, state.pagination.total_pages) }, (_, i) => {
-                        const pageNum = i + 1;
-                        return (
-                          <Button
-                            key={pageNum}
-                            variant={pageNum === state.pagination.page ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handlePageChange(pageNum)}
-                          >
-                            {pageNum}
-                          </Button>
-                        );
-                      })}
-                      
-                      {state.pagination.page < state.pagination.total_pages && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(state.pagination.page + 1)}
-                        >
-                          다음
-                        </Button>
-                      )}
+                      <div className="text-right ml-3 flex-shrink-0">
+                        {treatment.Original_Price > treatment.Sell_Price && (
+                          <p className="text-xs text-gray-400 line-through mb-0.5">
+                            {treatment.Original_Price.toLocaleString()}원
+                          </p>
+                        )}
+                        <p className="text-sm font-medium text-gray-900 pr-1.5">
+                          {treatment.Sell_Price.toLocaleString()}원
+                        </p>
+                      </div>
                     </div>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
       )}
 
       {/* 초기 상태 */}
-      {!state.hasSearched && !state.loading && (
+      {!state.hasSearched && !storeLoading && (
         <Card className="border-none shadow-none">
           <CardContent className="px-6 py-2">
             <div className="text-center py-8">

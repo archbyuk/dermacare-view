@@ -94,7 +94,7 @@ export function AdminTab() {
   };
 
   return (
-    <div className="px-4">
+    <div className="px-7">
       <div className="w-full max-w-md mx-auto">
         {/* 메시지 표시 */}
         {message && (

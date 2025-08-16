@@ -6,6 +6,7 @@ import { BottomNav } from '@/components/nav/bottom-nav';
 import { TreatmentListTab } from '@/components/tabs/treatment-list-tab';
 import { SearchTab } from '@/components/tabs/search-tab';
 import { AdminTab } from '@/components/tabs/admin-tab';
+import { MyPageTab } from '@/components/tabs/mypage-tab';
 
 export default function MainPage() {
   const [activeTab, setActiveTab] = useState('treatments');
@@ -18,6 +19,8 @@ export default function MainPage() {
         return <SearchTab />;
       case 'admin':
         return <AdminTab />;
+      case 'mypage':
+        return <MyPageTab />;
       default:
         return <TreatmentListTab />;
     }
@@ -26,7 +29,7 @@ export default function MainPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* 상단 네비게이션바 */}
-      <TopNav activeTab={activeTab} />
+      <TopNav activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* 메인 콘텐츠 */}
       <div className="pt-20 pb-10">

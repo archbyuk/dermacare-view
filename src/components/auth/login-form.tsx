@@ -10,18 +10,31 @@ import { Checkbox } from '@/components/ui/checkbox';
 // 추후 zod, react-hook-form 적용 예정
 
 interface LoginFormProps {
-  onSubmit: (username: string, password: string) => void;
+  onSubmit: (username: string, password: string, rememberMe: boolean) => void;
   isLoading?: boolean;
 }
 
 export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  
+  // localStorage에서 이전 선택 가져오기
+  const [rememberMe, setRememberMe] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('rememberMe') === 'true';
+    }
+    return false;
+  });
+
+  // rememberMe 변경 시 localStorage에 저장
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+    localStorage.setItem('rememberMe', checked.toString());
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(username, password);
+    onSubmit(username, password, rememberMe);
   };
 
   return (
@@ -80,7 +93,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
               <Checkbox
                 id="remember"
                 checked={rememberMe}
-                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                onCheckedChange={(checked) => handleRememberMeChange(checked as boolean)}
                 disabled={isLoading}
                 className="h-4 w-4 data-[state=checked]:bg-gray-600 data-[state=checked]:border-gray-600 data-[state=checked]:text-white"
               />

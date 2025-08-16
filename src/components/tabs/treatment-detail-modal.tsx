@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { getTreatmentDetail } from '@/api/treatments-api';
 import { ProductDetail } from '@/types/treatments';
 import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 interface TreatmentDetailModalProps {
   isOpen: boolean;
@@ -55,7 +56,7 @@ export function TreatmentDetailModal({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-hidden">
-      <div className="bg-white rounded-xl w-full max-w-md h-[80vh] flex flex-col shadow-2xl border border-gray-200">
+      <div className="bg-white rounded-xl w-full max-w-md h-[73vh] flex flex-col shadow-2xl border border-gray-200 mb-20">
         
         {/* 헤더 */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -64,9 +65,9 @@ export function TreatmentDetailModal({
             onClick={onClose}
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-gray-600 p-0 h-auto"
+            className="!text-gray-500 hover:text-gray-600 p-0 h-auto"
           >
-            {/* 여기 수정의 여지가 있음 */}
+            <X className="!w-5 !h-5" />
           </Button>
         </div>
 
@@ -193,7 +194,7 @@ export function TreatmentDetailModal({
                   <h4 className="font-medium text-gray-900 mb-2">코스 패키지</h4>
                   <div className="space-y-3">
                     {detail.sequence_details.map((sequence, index) => (
-                      <div key={index} className="border-l-2 border-gray-300 pl-3 mb-2">
+                      <div key={index} className="border-l-2 border-gray-300 pl-3 mb-4">
                         <h5 className="text-sm font-medium text-gray-800 mb-1">{sequence.Step_Num} 회차</h5>
                         <div className="space-y-1">
                           {sequence.elements.map((element, elemIndex) => (
