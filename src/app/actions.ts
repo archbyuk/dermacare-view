@@ -99,7 +99,13 @@ export async function refreshTokenAction() {
         });
       }
       
-      return { success: true, message: '토큰이 갱신되었습니다.' };
+      // 토큰 정보도 함께 반환
+      return { 
+        success: true, 
+        message: '토큰이 갱신되었습니다.',
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token
+      };
     } else {
       throw new Error(response.data.message || '토큰 갱신에 실패했습니다.');
     }
@@ -138,31 +144,6 @@ export async function logoutAction() {
     await clearAuthCookies();
     
     return { success: false, error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' };
-  }
-}
-
-// 클라이언트 사이드 저장소 정리를 위한 함수
-export async function clearClientStorage() {
-  if (typeof window === 'undefined') return;
-  
-  try {
-    // localStorage 삭제
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('remember_me');
-    
-    // sessionStorage 삭제
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('refresh_token');
-    sessionStorage.removeItem('remember_me');
-    
-    // 쿠키 삭제 (클라이언트 사이드)
-    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    
-    console.log('✅ 클라이언트 저장소가 정리되었습니다.');
-  } catch (error) {
-    console.error('❌ 클라이언트 저장소 정리 실패:', error);
   }
 }
 
