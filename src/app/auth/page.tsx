@@ -1,48 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Logo } from '@/components/auth/login-logo';
 import { LoginForm } from '@/components/auth/login-form';
 import { loginAction } from '@/app/actions';
 import { useRouter } from 'next/navigation';
-import { tokenStorage, bfcacheHandler } from '@/lib/utils';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // iOS Safari bfcache 대응을 위한 이벤트 리스너
-  useEffect(() => {
-    // bfcache 복원 감지
-    const handlePageShow = (event: PageTransitionEvent) => {
-      bfcacheHandler.handlePageShow(event);
-    };
-
-    // 페이지 포커스 시 인증 상태 확인
-    const handleFocus = () => {
-      bfcacheHandler.handleFocus();
-    };
-
-    // 가시성 변경 시 인증 상태 확인
-    const handleVisibilityChange = () => {
-      bfcacheHandler.handleVisibilityChange();
-    };
-
-    // 이벤트 리스너 등록
-    window.addEventListener('pageshow', handlePageShow);
-    window.addEventListener('focus', handleFocus);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener('pageshow', handlePageShow);
-      window.removeEventListener('focus', handleFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
-  const handleLogin = async (username: string, password: string, rememberMe: boolean) => {
+  const handleLogin = async (username: string, password: string) => {
     setIsLoading(true);
     setError(null);
     
@@ -57,11 +26,6 @@ export default function LoginPage() {
 
       // loginAction에서 성공 시에만 객체를 반환하므로 result가 있으면 성공
       if (result && result.success) {
-        // 다중 저장소에 토큰 저장
-        if (result.access_token && result.refresh_token) {
-          tokenStorage.setTokens(result.access_token, result.refresh_token, rememberMe);
-        }
-        
         // 로그인 성공 시 홈페이지로 이동
         router.push('/');
         router.refresh(); // 페이지 새로고침하여 쿠키 반영

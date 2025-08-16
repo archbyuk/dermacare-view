@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { tokenStorage } from '../lib/utils';
 
 const instance = axios.create({
   baseURL: process.env.NODE_ENV === 'development' 
@@ -20,8 +19,8 @@ instance.interceptors.request.use(async (config) => {
     const token = (await cookies()).get('access_token')?.value;
     if (token) config.headers['Authorization'] = `Bearer ${token}`;
   } else {
-    // 클라이언트 사이드 로직 - 다중 저장소에서 토큰 가져오기
-    const token = tokenStorage.getAccessToken();
+    // 클라이언트 사이드 로직
+    const token = getCookie('access_token');
     if (token) config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
@@ -38,7 +37,7 @@ instance.interceptors.response.use(
   }
 );
 
-// 클라이언트에서 쿠키를 가져오는 함수 (기존 호환성 유지)
+// 클라이언트에서 쿠키를 가져오는 함수
 export function getCookie(name: string): string | null {
   if (typeof window === 'undefined') {
     return null; // 서버 사이드 렌더링에서는 null 반환
