@@ -136,6 +136,14 @@ export function TreatmentDetailModal({
                     </span>
                   </div>
                 )}
+                {detail.sequence_interval && detail.sequence_interval > 0 && (
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-sm text-gray-600">방문 주기</span>
+                    <span className="text-sm text-gray-500 font-medium">
+                      {detail.sequence_interval}일
+                    </span>
+                </div>
+                )}
               </div>
 
               {/* 시술 정보 */}
@@ -303,8 +311,8 @@ export function TreatmentDetailModal({
               {detail.Precautions && (
                 <div>
                   <h4 className="text-md font-medium text-gray-900 mb-2">주의사항</h4>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-sm text-red-700 leading-relaxed">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {detail.Precautions}
                     </p>
                   </div>

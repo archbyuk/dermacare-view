@@ -60,6 +60,7 @@ export interface ProductDetail {
   custom_count?: number;
   custom_details?: CustomDetail[];
   sequence_details?: SequenceDetail[];
+  sequence_interval?: number;
 }
 
 export interface ElementDetails {
@@ -79,7 +80,6 @@ export interface BundleDetail {
   Element_ID: number;
   Element_Cost: number;
   Element_Info: ElementDetails;
-  Sequence_Interval?: number;
 }
 
 export interface CustomDetail {
@@ -94,6 +94,7 @@ export interface CustomDetail {
 export interface SequenceDetail {
   Step_Num: number;
   elements: (ElementDetails & { Custom_Count?: number; Element_Limit?: number; Element_Cost?: number })[];
+  sequence_interval?: number;
 }
 
 export interface ProductDetailResponse {

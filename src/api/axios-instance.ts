@@ -30,9 +30,28 @@ instance.interceptors.request.use(async (config) => {
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.message);
-    console.error('Status:', error.response?.status);
-    console.error('URL:', error.config?.url);
+    // 에러 로깅 (개발 환경에서만)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', error.message);
+      console.error('Status:', error.response?.status);
+      console.error('URL:', error.config?.url);
+    }
+    
+    // 사용자 친화적인 에러 메시지로 변환 (에러 표시는 하지 않고 메시지만 변경)
+    if (error.response?.status === 401) {
+      error.message = '아이디 또는 비밀번호가 올바르지 않습니다.';
+    } else if (error.response?.status === 403) {
+      error.message = '접근 권한이 없습니다.';
+    } else if (error.response?.status === 404) {
+      error.message = '요청한 정보를 찾을 수 없습니다.';
+    } else if (error.response?.status >= 500) {
+      error.message = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    } else if (error.code === 'ECONNABORTED') {
+      error.message = '요청 시간이 초과되었습니다.';
+    } else if (!error.response) {
+      error.message = '네트워크 연결을 확인해주세요.';
+    }
+    
     return Promise.reject(error);
   }
 );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,12 +19,14 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const [password, setPassword] = useState('');
   
   // localStorage에서 이전 선택 가져오기
-  const [rememberMe, setRememberMe] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('rememberMe') === 'true';
-    }
-    return false;
-  });
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    setRememberMe(savedRememberMe);
+  }, []);
 
   // rememberMe 변경 시 localStorage에 저장
   const handleRememberMeChange = (checked: boolean) => {
@@ -92,7 +94,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="remember"
-                checked={rememberMe}
+                checked={isClient ? rememberMe : false}
                 onCheckedChange={(checked) => handleRememberMeChange(checked as boolean)}
                 disabled={isLoading}
                 className="h-4 w-4 data-[state=checked]:bg-gray-600 data-[state=checked]:border-gray-600 data-[state=checked]:text-white"
