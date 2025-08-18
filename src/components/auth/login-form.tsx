@@ -106,7 +106,12 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
                 로그인 정보 저장
               </Label>
             </div>
-            <Button variant="ghost" className="p-0 h-auto text-xs font-semibold text-gray-600 hover:text-gray-800">
+            <Button 
+              type="button"
+              variant="ghost" 
+              className="p-0 h-auto text-xs font-semibold text-gray-600 hover:text-gray-800"
+              onClick={() => window.open('https://open.kakao.com/o/s202NiNh', '_blank')}
+            >
               문의하기
             </Button>
           </div>
