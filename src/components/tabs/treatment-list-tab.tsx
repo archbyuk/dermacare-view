@@ -23,9 +23,7 @@ export function TreatmentListTab() {
   // 로컬 UI 상태
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('latest');
-  const [currentPage, setCurrentPage] = useState(1);
   const [displayedTreatments, setDisplayedTreatments] = useState<Product[]>([]);
-  const itemsPerPage = 100;
   
   // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,12 +65,11 @@ export function TreatmentListTab() {
     return filtered;
   }, [treatments, selectedCategory, sortBy]);
 
-  // 페이지네이션 처리
+  // 필터링된 데이터를 직접 사용 (페이지네이션 제거)
   useEffect(() => {
     const filtered = filteredAndSortedTreatments();
-    const nextItems = filtered.slice(0, currentPage * itemsPerPage);
-    setDisplayedTreatments(nextItems);
-  }, [filteredAndSortedTreatments, currentPage]);
+    setDisplayedTreatments(filtered);
+  }, [filteredAndSortedTreatments]);
 
   // 시술 상세 보기 모달 열기
   const openTreatmentDetail = (treatment: Product) => {
@@ -92,19 +89,16 @@ export function TreatmentListTab() {
   // 카테고리 변경 시
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    setCurrentPage(1);
   };
 
   // 정렬 변경 시
   const handleSortChange = (sort: string) => {
     setSortBy(sort);
-    setCurrentPage(1);
   };
 
   // 새로고침 버튼 클릭
   const handleRefresh = () => {
     refreshTreatments();
-    setCurrentPage(1);
   };
 
   const categories = [
