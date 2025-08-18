@@ -26,7 +26,7 @@ export default function LoginPage() {
       
       // Server Action 호출
       const result = await loginAction(formData);
-      console.log('로그인 결과:', result);
+      // console.log('로그인 결과:', result);
       
       // Zustand store에 사용자 정보 저장
       login(result);
