@@ -17,6 +17,7 @@ export interface Product {
   procedure_count: number;
   class_types: string[];
   class_type_count: number;
+  Precautions?: string;
 }
 
 export interface PaginationInfo {
@@ -70,6 +71,7 @@ export interface ElementDetails {
   Cost_Time: number;
   Plan_State: string;
   Plan_Count: number;
+  Plan_Interval?: number;
 }
 
 export interface BundleDetail {
@@ -77,6 +79,7 @@ export interface BundleDetail {
   Element_ID: number;
   Element_Cost: number;
   Element_Info: ElementDetails;
+  Sequence_Interval?: number;
 }
 
 export interface CustomDetail {

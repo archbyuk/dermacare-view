@@ -10,6 +10,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTreatmentsStore } from '@/store/treatments-store';
 import Image from 'next/image';
 
+// 초성 매핑 테이블
+const CHOSUNG_MAP: { [key: string]: string } = {
+  'ㄱ': '가', 'ㄲ': '까', 'ㄴ': '나', 'ㄷ': '다', 'ㄸ': '따',
+  'ㄹ': '라', 'ㅁ': '마', 'ㅂ': '바', 'ㅃ': '빠', 'ㅅ': '사',
+  'ㅆ': '싸', 'ㅇ': '아', 'ㅈ': '자', 'ㅉ': '짜', 'ㅊ': '차',
+  'ㅋ': '카', 'ㅌ': '타', 'ㅍ': '파', 'ㅎ': '하'
+};
+
+// 초성 추출 함수
+const extractChosung = (text: string): string => {
+  const cho = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const charCode = text.charCodeAt(i);
+    if (charCode >= 44032 && charCode <= 55203) { // 한글 유니코드 범위
+      const unicode = charCode - 44032;
+      const choIndex = Math.floor(unicode / 588);
+      result += cho[choIndex];
+    } else {
+      result += text[i];
+    }
+  }
+  return result;
+};
+
+// 초성 검색 함수
+const matchesChosung = (searchTerm: string, targetText: string): boolean => {
+  // 검색어가 초성인지 확인
+  const isChosungSearch = /^[ㄱ-ㅎ]+$/.test(searchTerm);
+  if (!isChosungSearch) return false;
+  
+  // 대상 텍스트의 초성 추출
+  const targetChosung = extractChosung(targetText);
+  
+  // 초성 매칭 확인
+  return targetChosung.includes(searchTerm);
+};
+
 // 검색 결과 타입 정의 (API 의존성 제거)
 interface SearchResult {
   ID: number;
@@ -21,6 +60,7 @@ interface SearchResult {
   elements: string[];
   class_types: string[];
   class_type_count: number;
+  Precautions?: string;
 }
 
 interface SearchState {
@@ -82,9 +122,74 @@ export function SearchTab() {
         return true;
       }
       
+      // 초성 검색 - 시술명
+      if (treatment.Product_Name && matchesChosung(searchTerm, treatment.Product_Name)) {
+        return true;
+      }
+      
       // 분류 검색 (class_types)
       if (treatment.class_types?.some(type => type.toLowerCase().includes(searchTerm))) {
         return true;
+      }
+      
+      // 초성 검색 - 분류
+      if (treatment.class_types?.some(type => matchesChosung(searchTerm, type))) {
+        return true;
+      }
+      
+      // 시술명 검색 (procedure_names)
+      if (treatment.procedure_names?.some(procedure => procedure.toLowerCase().includes(searchTerm))) {
+        return true;
+      }
+      
+      // 초성 검색 - 시술명 배열
+      if (treatment.procedure_names?.some(procedure => matchesChosung(searchTerm, procedure))) {
+        return true;
+      }
+      
+      // 상품 설명 검색 (Product_Description)
+      if (treatment.Product_Description?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 상품 설명
+      if (treatment.Product_Description && matchesChosung(searchTerm, treatment.Product_Description)) {
+        return true;
+      }
+
+      // 시술 주의사항 검색 - 주의사항
+      if (treatment.Precautions?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 주의사항
+      if (treatment.Precautions && matchesChosung(searchTerm, treatment.Precautions)) {
+        return true;
+      }
+      
+      // 패키지 타입 검색 (Package_Type) - 다양한 검색어 지원
+      const packageType = treatment.Package_Type?.toLowerCase();
+      if (packageType) {
+        // 번들 → 패키지, 번들
+        if (packageType === '번들' && (searchTerm === '패키지' || searchTerm === '번들')) {
+          return true;
+        }
+        // 시퀀스 → 코스, 코스 패키지, 시퀀스
+        if (packageType === '시퀀스' && (searchTerm === '코스' || searchTerm === '코스 패키지' || searchTerm === '시퀀스')) {
+          return true;
+        }
+        // 단일시술 → 단일시술, 일반 시술, 단일
+        if (packageType === '단일시술' && (searchTerm === '단일시술' || searchTerm === '일반 시술' || searchTerm === '단일')) {
+          return true;
+        }
+        // 커스텀 → 커스텀
+        if (packageType === '커스텀' && searchTerm === '커스텀') {
+          return true;
+        }
+        // 기존 방식도 유지 (정확한 매칭)
+        if (packageType.includes(searchTerm)) {
+          return true;
+        }
       }
       
       return false;
@@ -100,7 +205,8 @@ export function SearchTab() {
       Original_Price: treatment.Original_Price,
       elements: treatment.class_types || [],
       class_types: treatment.class_types || [],
-      class_type_count: treatment.class_types?.length || 0
+      class_type_count: treatment.class_types?.length || 0,
+      Precautions: treatment.Precautions
     }));
 
     setState(prev => ({

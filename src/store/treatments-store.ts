@@ -59,6 +59,7 @@ export const useTreatmentsStore = create<TreatmentsState>()(
             page_size: 1000,
             product_type: 'all'
           });
+          console.log('불러온 데이터:', response.data);
           
           set({
             treatments: response.data,
