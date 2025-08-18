@@ -31,7 +31,7 @@ export function TreatmentListTab() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTreatment, setSelectedTreatment] = useState<{ id: number; type: 'standard' | 'event' } | null>(null);
 
-  // 초기 데이터 로드
+  // 초기 데이터 로드: zustand store에서 데이터 가져오기
   useEffect(() => {
     fetchTreatments();
   }, [fetchTreatments]);

@@ -76,7 +76,7 @@ export function TreatmentDetailModal({
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-start pt-20 bg-white bg-opacity-90">
               <div className="flex items-center mb-4">
-                <Image src="/symbol_facefilter.svg" alt="로딩" width={32} height={32} className="animate-spin" />
+                <Image src="/symbol_facefilter.svg" alt="로딩" width={32} height={32}/>
               </div>
               <p className="text-gray-600 text-sm">로딩 중입니다</p>
             </div>
@@ -249,6 +249,12 @@ export function TreatmentDetailModal({
                       <span className="text-gray-600">티켓팅 횟수</span>
                       <span className="text-gray-900">{detail.element_details.Plan_Count ? `${detail.element_details.Plan_Count}회` : '-'}</span>
                     </div>
+                    {detail.element_details.Plan_Interval && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">방문 주기</span>
+                        <span className="text-gray-900">{detail.element_details.Plan_Interval}일</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -313,7 +319,7 @@ export function TreatmentDetailModal({
         <div className="p-4 border-gray-200 flex-shrink-0">
           <Button
             onClick={onClose}
-            className="w-full bg-gray-500 py-5 font-semibold"
+            className="w-full bg-gray-500 py-5 font-semibold text-white"
             variant="secondary"
           >
             닫기
