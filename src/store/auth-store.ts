@@ -1,18 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// 로그인 응답 타입 (JWT 토큰 제외)
+interface LoginResponse {
+  success: boolean;
+  message?: string;
+  user_id?: number;
+  role?: string;
+  access_token?: string;
+  refresh_token?: string;
+  username?: string;
+}
+
 // 사용자 정보 타입
 interface User {
-  id: string;
-  username: string;
+  user_id: number;
   role: string;
+  username: string;
 }
 
 // 인증 상태 관리
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (userData: User) => void;
+  login: (loginResponse: LoginResponse) => void;
   logout: () => void;
 }
 
@@ -24,10 +35,18 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       
       // 액션
-      login: (userData) => set({ 
-        user: userData, 
-        isAuthenticated: true 
-      }),
+      login: (loginResponse) => {
+        if (loginResponse.success && loginResponse.user_id && loginResponse.role && loginResponse.username) {
+          set({ 
+            user: {
+              user_id: loginResponse.user_id,
+              role: loginResponse.role,
+              username: loginResponse.username
+            }, 
+            isAuthenticated: true 
+          });
+        }
+      },
       
       logout: () => set({ 
         user: null, 

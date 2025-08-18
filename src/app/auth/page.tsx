@@ -5,11 +5,13 @@ import { Logo } from '@/components/auth/login-logo';
 import { LoginForm } from '@/components/auth/login-form';
 import { loginAction } from '@/app/actions';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth-store';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { login } = useAuthStore(); // Zustand store에 사용자 정보 저장 (JWT 토큰 제외)
 
   const handleLogin = async (username: string, password: string, rememberMe: boolean) => {
     setIsLoading(true);
@@ -24,6 +26,10 @@ export default function LoginPage() {
       
       // Server Action 호출
       const result = await loginAction(formData);
+      console.log('로그인 결과:', result);
+      
+      // Zustand store에 사용자 정보 저장
+      login(result);
 
       // loginAction에서 성공 시에만 객체를 반환하므로 result가 있으면 성공
       if (result && result.success) {
@@ -35,6 +41,9 @@ export default function LoginPage() {
         console.error('로그인 실패:', result.error);
         setError(result.error || '로그인에 실패했습니다.');
       }
+    } catch (error) {
+      console.error('로그인 에러:', error);
+      setError('로그인 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +59,7 @@ export default function LoginPage() {
         
         {/* 에러 메시지 */}
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+          <div className="mb-1 p-3 px-10 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center">
             {error}
           </div>
         )}

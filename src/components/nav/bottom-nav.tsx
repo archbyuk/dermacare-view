@@ -1,6 +1,6 @@
 'use client';
 
-import { ClipboardList, User, UserCircle } from 'lucide-react';
+import { ClipboardList, UserCircle } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -13,11 +13,6 @@ const navItems: NavItem[] = [
     id: 'treatments',
     label: '시술목록',
     icon: <ClipboardList className="w-6 h-6" />,
-  },
-  {
-    id: 'admin',
-    label: '관리자',
-    icon: <User className="w-6 h-6" />,
   },
   {
     id: 'mypage',

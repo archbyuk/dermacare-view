@@ -5,7 +5,6 @@ import { TopNav } from '@/components/nav/top-nav';
 import { BottomNav } from '@/components/nav/bottom-nav';
 import { TreatmentListTab } from '@/components/tabs/treatment-list-tab';
 import { SearchTab } from '@/components/tabs/search-tab';
-import { AdminTab } from '@/components/tabs/admin-tab';
 import { MyPageTab } from '@/components/tabs/mypage-tab';
 
 export default function MainPage() {
@@ -17,8 +16,6 @@ export default function MainPage() {
         return <TreatmentListTab />;
       case 'search':
         return <SearchTab />;
-      case 'admin':
-        return <AdminTab />;
       case 'mypage':
         return <MyPageTab />;
       default:

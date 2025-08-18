@@ -8,6 +8,7 @@ export function Logo() {
         alt="Logo"
         width={320}
         height={320}
+        priority
       />
     </div>
   );

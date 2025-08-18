@@ -94,7 +94,7 @@ export function AdminTab() {
   };
 
   return (
-    <div className="px-7">
+    <div className="px-7 mt-6">
       <div className="w-full max-w-md mx-auto">
         {/* 메시지 표시 */}
         {message && (
@@ -162,7 +162,7 @@ export function AdminTab() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 지원되는 파일 ({supportedFiles.total_count}개)
               </h3>
-              <div className="bg-gray-50 rounded-lg p-4 max-h-[47vh] overflow-y-auto border border-gray-200">
+              <div className="bg-gray-50 rounded-lg p-4 max-h-[44vh] overflow-y-auto border border-gray-200">
                 <div className="grid grid-cols-1 gap-2 text-sm">
                   {supportedFiles.supported_files.map((filename, index) => (
                     <div key={index} className="text-gray-600 font-mono bg-white px-3 py-2 rounded border border-gray-200">

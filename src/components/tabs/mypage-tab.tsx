@@ -4,26 +4,37 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, HelpCircle, Shield } from 'lucide-react';
+import { LogOut, User, Users, X, ChevronRight } from 'lucide-react';
 import { logoutAction } from '@/app/actions';
+import { useAuthStore } from '@/store/auth-store';
+import { AdminTab } from './admin-tab';
 import Image from 'next/image';
 
 export function MyPageTab() {
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showAdminTab, setShowAdminTab] = useState(false);
+  const [isClosingAdminTab, setIsClosingAdminTab] = useState(false);
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
     try {
       const result = await logoutAction();
       
       if (result.success) {
+        // Zustand store에서도 로그아웃
+        logout();
         router.push('/auth');
       } else {
         console.error('로그아웃 에러:', result.error);
+        // 에러가 발생해도 store는 초기화
+        logout();
         router.push('/auth');
       }
     } catch (error) {
       console.error('로그아웃 에러:', error);
+      // 에러가 발생해도 store는 초기화
+      logout();
       router.push('/auth');
     }
   };
@@ -34,92 +45,109 @@ export function MyPageTab() {
       title: '프로필',
       description: '내 정보 관리',
       icon: <User className="w-5 h-5" />,
-      onClick: () => console.log('프로필 클릭')
     },
     {
-      id: 'settings',
-      title: '설정',
-      description: '앱 설정',
-      icon: <Settings className="w-5 h-5" />,
-      onClick: () => console.log('설정 클릭')
+      id: 'admin',
+      title: '관리자',
+      description: '시술 데이터 관리',
+      icon: <Users className="w-5 h-5" />,
+      onClick: () => setShowAdminTab(true),
+      showOnlyForRole: '관리자' // 관리자만 보이도록
     },
-    {
-      id: 'help',
-      title: '도움말',
-      description: '자주 묻는 질문',
-      icon: <HelpCircle className="w-5 h-5" />,
-      onClick: () => console.log('도움말 클릭')
-    },
-    {
-      id: 'privacy',
-      title: '개인정보처리방침',
-      description: '개인정보 보호',
-      icon: <Shield className="w-5 h-5" />,
-      onClick: () => console.log('개인정보처리방침 클릭')
-    }
   ];
 
   return (
-    <div className="pb-1 px-7 slide-in-left">
-      {/* 프로필 섹션 */}
-      <div className="mb-4">
-        <Card className="border-none shadow-none bg-gradient-to-r from-gray-50 to-gray-100">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                <Image src="/symbol_facefilter.svg" alt="프로필" width={32} height={32} />
+    <>
+      {/* 애니메이션 적용할 내용 영역 */}
+      <div className="px-7 slide-in-left">
+        {/* 프로필 섹션 */}
+        <div className="mb-6">
+          <Card className="border-none shadow-none bg-gradient-to-br from-gray-100 via-white to-gray-200">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <Image src="/symbol_facefilter.svg" alt="프로필" width={32} height={32} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-semibold text-gray-900 truncate">
+                    {isAuthenticated ? user?.username : '사용자'}
+                  </h2>
+                  <div className="flex items-center space-x-3 mt-1">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                      {isAuthenticated ? `No. ${user?.user_id}` : 'Guest'}
+                    </span>
+                    {isAuthenticated && user?.role && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800">
+                        {user.role}
+                      </span>
+                    )}
+                  </div>
+                  {!isAuthenticated && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      로그인이 필요합니다
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold text-gray-900">사용자</h2>
-                <p className="text-sm text-gray-600">dermacare@example.com</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 메뉴 목록 */}
-      <div className="space-y-3">
-        {menuItems.map((item) => (
-          <Card key={item.id} className="border-none shadow-none">
-            <CardContent className="p-0">
-              <button
-                onClick={item.onClick}
-                className="w-full p-4 flex items-center space-x-3 hover:bg-gray-50 transition-colors"
-              >
-                <div className="text-gray-500">
-                  {item.icon}
-                </div>
-                <div className="flex-1 text-left">
-                  <h3 className="text-sm font-medium text-gray-900">{item.title}</h3>
-                  <p className="text-xs text-gray-500">{item.description}</p>
-                </div>
-                <div className="text-gray-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </button>
             </CardContent>
           </Card>
-        ))}
+        </div>
+
+        {/* 메뉴 목록 */}
+        <div className="space-y-3">
+          {menuItems
+            .filter(item => {
+              // showOnlyForRole이 있고, 사용자 역할이 일치하지 않으면 숨김
+              if (item.showOnlyForRole && user?.role !== item.showOnlyForRole) {
+                return false;
+              }
+              return true;
+            })
+            .map((item) => (
+              <Card key={item.id} className="border-none shadow-none">
+                <CardContent>
+                  <Button
+                    onClick={item.onClick}
+                    variant="ghost"
+                    className="w-full flex items-center space-x-4 hover:bg-gray-50 transition-colors justify-start p-0 h-auto"
+                  >
+                    <div className="text-gray-500">
+                      {item.icon}
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="text-sm font-medium text-gray-900">{item.title}</h3>
+                      <p className="text-xs text-gray-500">{item.description}</p>
+                    </div>
+                    <div className="text-gray-400">
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+        </div>
+        
+        {/* 로그아웃 버튼 공간 확보 */}
+        <div className="h-32"></div>
       </div>
 
-      {/* 로그아웃 버튼 */}
-      <div className="mt-8">
-        <Button
-          onClick={() => setShowLogoutModal(true)}
-          variant="outline"
-          className="w-full py-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          로그아웃
-        </Button>
-      </div>
+      {/* 로그아웃 버튼 - 애니메이션과 분리된 fixed 요소 */}
+      {!showAdminTab && !isClosingAdminTab && (
+        <div className="fixed bottom-18 left-0 right-0 px-7 py-4 bg-white z-40">
+          <Button
+            onClick={() => setShowLogoutModal(true)}
+            variant="outline"
+            className="w-full py-5 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            로그아웃
+          </Button>
+        </div>
+      )}
 
       {/* 로그아웃 확인 모달 */}
       {showLogoutModal && (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-[70vw] shadow-xl mx-4">
             <div className="flex items-center mb-4">
               <LogOut className="w-6 h-6 text-red-500 mr-3" />
@@ -149,6 +177,39 @@ export function MyPageTab() {
           </div>
         </div>
       )}
-    </div>
+
+      {/* 관리자 탭 슬라이드 오버레이 */}
+      {(showAdminTab || isClosingAdminTab) && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50">
+          <div className={`absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 slide-in-right ease-in-out ${
+            showAdminTab && !isClosingAdminTab ? 'translate-x-0' : 'translate-x-full'
+          }`}>
+            {/* 헤더 */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mt-1">관리자 페이지</h2>
+              <Button
+                onClick={() => {
+                  setIsClosingAdminTab(true);
+                  setTimeout(() => {
+                    setShowAdminTab(false);
+                    setIsClosingAdminTab(false);
+                  }, 300);
+                }}
+                variant="ghost"
+                size="sm"
+                className="!text-gray-500 hover:text-gray-600 p-0 h-auto"
+              >
+                <X className="!w-5 !h-5" />
+              </Button>
+            </div>
+            
+            {/* 관리자 탭 내용 */}
+            <div className="h-full overflow-y-auto">
+              <AdminTab />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

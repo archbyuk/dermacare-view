@@ -14,6 +14,7 @@ export async function loginAction(formData: FormData) {
       username,
       password
     });
+    // console.log('response', response);
     
     if (response.data.success) {
       // 쿠키 설정
@@ -48,7 +49,8 @@ export async function loginAction(formData: FormData) {
         user_id: response.data.user_id,
         role: response.data.role,
         access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token
+        refresh_token: response.data.refresh_token,
+        username: response.data.username
       };
       
     } else {
