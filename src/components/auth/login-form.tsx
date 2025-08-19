@@ -110,7 +110,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
               type="button"
               variant="ghost" 
               className="p-0 h-auto text-xs font-semibold text-gray-600 hover:text-gray-800"
-              onClick={() => window.open('https://open.kakao.com/o/s202NiNh', '_blank')}
+              onClick={() => window.open(process.env.NEXT_PUBLIC_KAKAO_OPENCHAT_URL, '_blank')}
             >
               문의하기
             </Button>

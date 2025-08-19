@@ -68,7 +68,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // svg/png/jpg/webp/ico 같은 정적 파일은 제외
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    // svg/png/jpg/webp/ico/manifest 같은 정적 파일은 제외
+    '/((?!api|_next/static|_next/image|favicon.ico|manifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)',
   ],
 }
