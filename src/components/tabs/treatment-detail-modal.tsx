@@ -24,12 +24,6 @@ export function TreatmentDetailModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen && productId) {
-      fetchTreatmentDetail();
-    }
-  }, [isOpen, productId, productType]);
-
   const fetchTreatmentDetail = async () => {
     try {
       setLoading(true);
@@ -51,6 +45,12 @@ export function TreatmentDetailModal({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && productId) {
+      fetchTreatmentDetail();
+    }
+  }, [isOpen, productId, productType]);
 
   if (!isOpen) return null;
 

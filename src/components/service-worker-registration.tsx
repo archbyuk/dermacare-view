@@ -7,18 +7,20 @@ export function ServiceWorkerRegistration() {
     if ('serviceWorker' in navigator) {
       // 기존 Service Worker들 제거
       navigator.serviceWorker.getRegistrations().then((registrations) => {
-        for (let registration of registrations) {
+        for (const registration of registrations) {
           registration.unregister();
         }
       });
 
       // 새 Service Worker 등록
       navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
+        .then(() => {
           // Service Worker 등록 성공
+          console.log('Service Worker registered successfully');
         })
-        .catch((registrationError) => {
+        .catch(() => {
           // Service Worker 등록 실패 시 조용히 처리
+          console.warn('Service Worker registration failed');
         });
     }
   }, []);
