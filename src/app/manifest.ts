@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'FFilter',
     description: '페이스필터 시술 관리 앱',
     start_url: '/',
-    display: 'standalone',
+    display: 'fullscreen',
     background_color: '#ffffff',
     theme_color: '#000000',
     orientation: 'portrait',
