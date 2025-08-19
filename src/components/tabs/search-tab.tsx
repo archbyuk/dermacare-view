@@ -10,13 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTreatmentsStore } from '@/store/treatments-store';
 import Image from 'next/image';
 
-// 초성 매핑 테이블
-const CHOSUNG_MAP: { [key: string]: string } = {
-  'ㄱ': '가', 'ㄲ': '까', 'ㄴ': '나', 'ㄷ': '다', 'ㄸ': '따',
-  'ㄹ': '라', 'ㅁ': '마', 'ㅂ': '바', 'ㅃ': '빠', 'ㅅ': '사',
-  'ㅆ': '싸', 'ㅇ': '아', 'ㅈ': '자', 'ㅉ': '짜', 'ㅊ': '차',
-  'ㅋ': '카', 'ㅌ': '타', 'ㅍ': '파', 'ㅎ': '하'
-};
 
 // 초성 추출 함수
 const extractChosung = (text: string): string => {
