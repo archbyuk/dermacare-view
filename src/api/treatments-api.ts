@@ -9,7 +9,7 @@ import {
 } from '@/types/treatments';
 
 // 시술 목록 조회
-export async function getTreatments(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
+export async function getProducts(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
   try {
     const { page = 1, page_size = 30, product_type = 'all' } = params;
     

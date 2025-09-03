@@ -3,8 +3,8 @@ const CACHE_NAME = 'dermacare-v1';
 const urlsToCache = [
   '/',
   '/auth',
-  '/facefilter_logo.svg',
-  '/symbol_facefilter.svg'
+  '/word-mark.svg',
+  '/logo.svg'
 ];
 
 // Install event - 캐시 초기화
