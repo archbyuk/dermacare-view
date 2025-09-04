@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product } from '@/types/treatments';
-import { getTreatments } from '@/api/treatments-api';
+import { getProducts } from '@/api/treatments-api';
 
 interface TreatmentsState {
   // 원본 데이터
@@ -54,12 +54,12 @@ export const useTreatmentsStore = create<TreatmentsState>()(
         try {
           set({ loading: true, error: null });
           
-          const response = await getTreatments({
+          const response = await getProducts({
             page: 1,
-            page_size: 1000,
+            page_size: 10000,
             product_type: 'all'
           });
-          // console.log('불러온 데이터:', response.data);
+          
           
           set({
             treatments: response.data,

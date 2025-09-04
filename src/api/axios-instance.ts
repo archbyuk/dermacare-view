@@ -8,7 +8,7 @@ const instance = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true, // 쿠키 주고받기 위해 필요
-  timeout: 10000, // 10초 타임아웃 추가
+  timeout: 20000, // 10초 타임아웃 추가
 });
 
 // 서버사이드와 클라이언트사이드 모두에서 토큰을 헤더에 추가

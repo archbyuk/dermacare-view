@@ -138,3 +138,30 @@ html, body {
 .slide-in-left {
   animation: slideInLeft 0.4s ease-out;
 }
+
+/* Accordion 애니메이션 */
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}

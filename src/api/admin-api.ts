@@ -1,6 +1,7 @@
 'use server'
 
 import { instance } from './axios-instance';
+import { put } from '@vercel/blob';
 
 export async function uploadSingleExcel(file: File): Promise<{
   status: string;
@@ -48,10 +49,32 @@ export async function uploadMultipleExcel(
   cleared_tables?: Record<string, number>;
 }> {
   try {
+    const fileUrls = [];
+
+    // 각 파일을 Vercel Blob에 업로드
+    for (const file of files) {
+      try {
+        const blob = await put(file.name, file, {
+          access: 'public',
+          allowOverwrite: true, // 기존 파일 덮어쓰기
+        });
+        console.log('blob 업로드: ', blob);
+          
+        fileUrls.push({
+          url: blob.url,
+          name: file.name,
+          size: file.size
+        });
+        console.log('fileUrls 가져온 게 있는지: ', fileUrls);
+      } catch (error) {
+        console.error(`파일 ${file.name} Blob 업로드 실패:`, error);
+        throw new Error(`파일 ${file.name} 업로드 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      }
+    }
+
+    // FormData로 파일 URL들과 clear_tables 옵션 전송
     const formData = new FormData();
-    files.forEach(file => {
-      formData.append('files', file);
-    });
+    formData.append('file_urls', JSON.stringify(fileUrls));
     formData.append('clear_tables', clearTables.toString());
 
     const response = await instance.post('/excel/upload-multiple', formData, {
@@ -59,6 +82,8 @@ export async function uploadMultipleExcel(
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log('엔드포인트에 전송할 데이터', response);
+
     return response.data;
   } catch (error: unknown) {
     console.error('다중 엑셀 업로드 에러:', error);
@@ -86,7 +111,7 @@ export async function getSupportedFiles(): Promise<{
 // 관리자 권한 확인
 export async function checkAdminRole(): Promise<{ isAdmin: boolean; message?: string }> {
   try {
-    const response = await instance.get('/admin/check-role');
+    const response = await instance.get('/check-role');
     
     return {
       isAdmin: response.data.is_admin || false,
