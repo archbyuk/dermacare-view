@@ -37,7 +37,7 @@ export interface GlobalUpdateResponse {
  */
 export const getGlobalSettings = async (): Promise<GlobalResponse> => {
     try {
-        const response = await instance.get<GlobalResponse>('/admin/global/');
+        const response = await instance.get<GlobalResponse>('/api/admin-tables/global/');
         return response.data;
     } catch (error: unknown) {
         console.error('Global 설정 조회 중 오류:', error);
@@ -55,7 +55,7 @@ export const updateGlobalSettings = async (
 ): Promise<GlobalUpdateResponse> => {
     try {
         const response = await instance.put<GlobalUpdateResponse>(
-            '/admin/global/', 
+            '/api/admin-tables/global/', 
             globalData
         );
         return response.data;

@@ -82,7 +82,7 @@ export interface MembershipResponse {
  */
 export const getMembershipList = async (): Promise<MembershipResponse[]> => {
   try {
-    const response = await instance.get('/admin/membership/');
+    const response = await instance.get('/api/admin-tables/membership/');
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 목록 조회 실패:', error);
@@ -99,7 +99,7 @@ export const getMembershipDetail = async (membership_id: number): Promise<Member
       throw new Error('Membership ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.get(`/admin/membership/${membership_id}`);
+    const response = await instance.get(`/api/admin-tables/membership/${membership_id}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 상세 조회 실패:', error);
@@ -152,7 +152,7 @@ export const createMembership = async (membershipData: MembershipCreateRequest):
       throw new Error('시퀀스 패키지의 경우 Sequence ID가 필요합니다.');
     }
     
-    const response = await instance.post('/admin/membership/', membershipData);
+    const response = await instance.post('/api/admin-tables/membership/', membershipData);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 생성 실패:', error);
@@ -197,7 +197,7 @@ export const updateMembership = async (membership_id: number, membershipData: Me
       throw new Error('유효기간은 0보다 커야 합니다.');
     }
     
-    const response = await instance.put(`/admin/membership/${membership_id}`, membershipData);
+    const response = await instance.put(`/api/admin-tables/membership/${membership_id}`, membershipData);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 수정 실패:', error);
@@ -214,7 +214,7 @@ export const deleteMembership = async (membership_id: number): Promise<{ status:
       throw new Error('Membership ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.delete(`/admin/membership/${membership_id}`);
+    const response = await instance.delete(`/api/admin-tables/membership/${membership_id}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 삭제 실패:', error);
@@ -231,7 +231,7 @@ export const deactivateMembership = async (membership_id: number): Promise<{ sta
       throw new Error('Membership ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.put(`/admin/membership/${membership_id}/deactivate`);
+    const response = await instance.put(`/api/admin-tables/membership/${membership_id}/deactivate`);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 비활성화 실패:', error);
@@ -248,7 +248,7 @@ export const activateMembership = async (membership_id: number): Promise<{ statu
       throw new Error('Membership ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.put(`/admin/membership/${membership_id}/activate`);
+    const response = await instance.put(`/api/admin-tables/membership/${membership_id}/activate`);
     return response.data;
   } catch (error: unknown) {
     console.error('Membership 활성화 실패:', error);

@@ -150,7 +150,7 @@ export interface SequenceListResponse {
  */
 export const getSequencesList = async (): Promise<SequenceListResponse[]> => {
   try {
-    const response = await instance.get('/admin/sequences/');
+    const response = await instance.get('/api/admin-tables/sequences/');
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 목록 조회 실패:', error);
@@ -167,7 +167,7 @@ export const getSequenceDetail = async (group_id: number): Promise<SequenceRespo
       throw new Error('Group ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.get(`/admin/sequences/${group_id}`);
+    const response = await instance.get(`/api/admin-tables/sequences/${group_id}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 상세 조회 실패:', error);
@@ -212,7 +212,7 @@ export const createSequence = async (sequenceData: SequenceCreateRequest): Promi
       }
     }
     
-    const response = await instance.post('/admin/sequences/', sequenceData);
+    const response = await instance.post('/api/admin-tables/sequences/', sequenceData);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 생성 실패:', error);
@@ -259,7 +259,7 @@ export const updateSequence = async (group_id: number, sequenceData: SequenceUpd
       }
     }
     
-    const response = await instance.put(`/admin/sequences/${group_id}`, sequenceData);
+    const response = await instance.put(`/api/admin-tables/sequences/${group_id}`, sequenceData);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 수정 실패:', error);
@@ -276,7 +276,7 @@ export const deleteSequence = async (group_id: number): Promise<{ status: string
       throw new Error('Group ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.delete(`/admin/sequences/${group_id}`);
+    const response = await instance.delete(`/api/admin-tables/sequences/${group_id}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 삭제 실패:', error);
@@ -293,7 +293,7 @@ export const deactivateSequence = async (group_id: number): Promise<{ status: st
       throw new Error('Group ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.put(`/admin/sequences/${group_id}/deactivate`);
+    const response = await instance.put(`/api/admin-tables/sequences/${group_id}/deactivate`);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 비활성화 실패:', error);
@@ -310,7 +310,7 @@ export const activateSequence = async (group_id: number): Promise<{ status: stri
       throw new Error('Group ID는 0보다 커야 합니다.');
     }
     
-    const response = await instance.put(`/admin/sequences/${group_id}/activate`);
+    const response = await instance.put(`/api/admin-tables/sequences/${group_id}/activate`);
     return response.data;
   } catch (error: unknown) {
     console.error('Sequence 활성화 실패:', error);

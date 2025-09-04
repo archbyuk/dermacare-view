@@ -99,7 +99,7 @@ export interface GlobalSettings {
  */
 export const getElementsList = async (): Promise<Element[]> => {
   try {
-    const response = await instance.get('/admin/elements/');
+    const response = await instance.get('/api/admin-tables/elements/');
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 목록 조회 중 오류가 발생했습니다.');
@@ -113,7 +113,7 @@ export const getElementsList = async (): Promise<Element[]> => {
  */
 export const getElementDetail = async (elementId: number): Promise<Element> => {
   try {
-    const response = await instance.get(`/admin/elements/${elementId}`);
+    const response = await instance.get(`/api/admin-tables/elements/${elementId}`);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
@@ -130,7 +130,7 @@ export const getElementDetail = async (elementId: number): Promise<Element> => {
  */
 export const createElement = async (elementData: ElementCreateRequest): Promise<ApiResponse<Element>> => {
   try {
-    const response = await instance.post('/admin/elements/', elementData);
+    const response = await instance.post('/api/admin-tables/elements/', elementData);
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 생성 중 오류가 발생했습니다.');
@@ -148,7 +148,7 @@ export const updateElement = async (
   elementData: ElementUpdateRequest
 ): Promise<Element> => {
   try {
-    const response = await instance.put(`/admin/elements/${elementId}`, elementData);
+    const response = await instance.put(`/api/admin-tables/elements/${elementId}`, elementData);
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 수정 중 오류가 발생했습니다.');
@@ -162,7 +162,7 @@ export const updateElement = async (
  */
 export const deleteElement = async (elementId: number): Promise<ApiResponse> => {
   try {
-    const response = await instance.delete(`/admin/elements/${elementId}`);
+    const response = await instance.delete(`/api/admin-tables/elements/${elementId}`);
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 삭제 중 오류가 발생했습니다.');
@@ -176,7 +176,7 @@ export const deleteElement = async (elementId: number): Promise<ApiResponse> => 
  */
 export const deactivateElement = async (elementId: number): Promise<ApiResponse> => {
   try {
-    const response = await instance.put(`/admin/elements/${elementId}/deactivate`);
+    const response = await instance.put(`/api/admin-tables/elements/${elementId}/deactivate`);
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 비활성화 중 오류가 발생했습니다.');
@@ -192,7 +192,7 @@ export const deactivateElement = async (elementId: number): Promise<ApiResponse>
  */
 export const activateElement = async (elementId: number): Promise<ApiResponse> => {
   try {
-    const response = await instance.put(`/admin/elements/${elementId}/activate`);
+    const response = await instance.put(`/api/admin-tables/elements/${elementId}/activate`);
     return response.data;
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Element 활성화 중 오류가 발생했습니다.');
@@ -205,7 +205,7 @@ export const activateElement = async (elementId: number): Promise<ApiResponse> =
  */
 export const getGlobalSettings = async (): Promise<GlobalSettings> => {
   try {
-    const response = await instance.get('/admin/global/');
+    const response = await instance.get('/api/admin-tables/global/');
     return response.data;
   } catch (error: unknown) {
     console.error('Global 설정 조회 실패:', error);
