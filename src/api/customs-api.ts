@@ -1,3 +1,5 @@
+'use server'
+
 import { instance } from './axios-instance';
 import { Element } from './element-api';
 
