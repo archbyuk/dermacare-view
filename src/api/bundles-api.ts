@@ -88,7 +88,7 @@ export interface BundleActivateResponse {
  */
 export const getBundlesList = async (): Promise<BundleListResponse[]> => {
     try {
-        const response = await instance.get<BundleListResponse[]>('/api/admin-tables/bundles/');
+        const response = await instance.get<BundleListResponse[]>('/admin/bundles/');
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 목록 조회 중 오류:', error);
@@ -103,7 +103,7 @@ export const getBundlesList = async (): Promise<BundleListResponse[]> => {
  */
 export const getBundleDetail = async (groupId: number): Promise<BundleResponse> => {
     try {
-        const response = await instance.get<BundleResponse>(`/api/admin-tables/bundles/${groupId}`);
+        const response = await instance.get<BundleResponse>(`/admin/bundles/${groupId}`);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 상세 조회 중 오류:', error);
@@ -118,7 +118,7 @@ export const getBundleDetail = async (groupId: number): Promise<BundleResponse> 
  */
 export const createBundle = async (bundleData: BundleCreateRequest): Promise<BundleCreateResponse> => {
     try {
-        const response = await instance.post<BundleCreateResponse>('/api/admin-tables/bundles/', bundleData);
+        const response = await instance.post<BundleCreateResponse>('/admin/bundles/', bundleData);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 생성 중 오류:', error);
@@ -143,7 +143,7 @@ export const updateBundle = async (
     bundleData: BundleUpdateRequest
 ): Promise<BundleUpdateResponse> => {
     try {
-        const response = await instance.put<BundleUpdateResponse>(`/api/admin-tables/bundles/${groupId}`, bundleData);
+        const response = await instance.put<BundleUpdateResponse>(`/admin/bundles/${groupId}`, bundleData);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 수정 중 오류:', error);
@@ -158,7 +158,7 @@ export const updateBundle = async (
  */
 export const deleteBundle = async (groupId: number): Promise<BundleDeleteResponse> => {
     try {
-        const response = await instance.delete<BundleDeleteResponse>(`/api/admin-tables/bundles/${groupId}`);
+        const response = await instance.delete<BundleDeleteResponse>(`/admin/bundles/${groupId}`);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 삭제 중 오류:', error);
@@ -173,7 +173,7 @@ export const deleteBundle = async (groupId: number): Promise<BundleDeleteRespons
  */
 export const deactivateBundle = async (groupId: number): Promise<BundleActivateResponse> => {
     try {
-        const response = await instance.put<BundleActivateResponse>(`/api/admin-tables/bundles/${groupId}/deactivate`);
+        const response = await instance.put<BundleActivateResponse>(`/admin/bundles/${groupId}/deactivate`);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 비활성화 중 오류:', error);
@@ -188,7 +188,7 @@ export const deactivateBundle = async (groupId: number): Promise<BundleActivateR
  */
 export const activateBundle = async (groupId: number): Promise<BundleActivateResponse> => {
     try {
-        const response = await instance.put<BundleActivateResponse>(`/api/admin-tables/bundles/${groupId}/activate`);
+        const response = await instance.put<BundleActivateResponse>(`/admin/bundles/${groupId}/activate`);
         return response.data;
     } catch (error: unknown) {
         console.error('Bundle 활성화 중 오류:', error);
