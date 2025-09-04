@@ -8,10 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Save, Package, CreditCard, Calendar } from 'lucide-react';
 import { createMembership, MembershipCreateRequest } from '@/api/membership-api';
-import { Element, getElementsList, searchElementsByName } from '@/api/element-api';
+import { Element, getElementsList } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 import { BundleListResponse, getBundlesList } from '@/api/bundles-api';
 import { CustomListResponse, getCustomsList } from '@/api/customs-api';
-import { SequenceListResponse, getSequencesList, searchSequencesByName } from '@/api/sequences-api';
+import { SequenceListResponse, getSequencesList } from '@/api/sequences-api';
+import { searchSequencesByName } from '@/utils/sequence-utils';
 
 // 멤버십 생성 요청 타입 정의
 interface MembershipCreateData {

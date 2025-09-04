@@ -8,7 +8,7 @@ import { Search, RefreshCw } from 'lucide-react';
 import MembershipTab from './products-management/membership-tab';
 import StandardTab from './products-management/standard-tab';
 import EventTab from './products-management/event-tab';
-import { searchMembershipsByName } from '@/api/membership-api';
+import { searchMembershipsByName } from '@/utils/membership-utils'; 
 import { ProductGroupedResponse } from '@/api/products-api';
 import { useProductsStore } from '@/store/products-store';
 

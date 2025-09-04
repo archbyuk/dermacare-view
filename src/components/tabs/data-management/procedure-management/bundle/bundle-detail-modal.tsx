@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Settings, Save, Edit, Package, Tag, AlertTriangle, DollarSign, ChevronDown, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
 import { BundleListResponse, getBundleDetail, updateBundle } from '@/api/bundles-api';
-import { Element, getElementsList, searchElementsByName, getElementDetail } from '@/api/element-api';
+import { Element, getElementsList, getElementDetail } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 import { useModalStore } from '@/store/modal-store';
 
 interface BundleDetailModalProps {

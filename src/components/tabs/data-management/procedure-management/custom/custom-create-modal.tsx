@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Save, Search, Package, Plus, Trash2 } from 'lucide-react';
 import { createCustom, CustomCreateRequest, CustomElementRequest } from '@/api/customs-api';
-import { Element, getElementsList, searchElementsByName } from '@/api/element-api';
+import { Element, getElementsList } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 
 interface CustomCreateModalProps {
     isOpen: boolean;

@@ -9,10 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { X, Edit, Save, Calendar, CreditCard, Package, Clock, ExternalLink } from 'lucide-react';
 import { MembershipResponse, updateMembership } from '@/api/membership-api';
 import { useModalStore } from '@/store/modal-store';
-import { getElementDetail, Element, getElementsList, searchElementsByName } from '@/api/element-api';
+import { getElementDetail, Element, getElementsList } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 import { getBundleDetail, BundleListResponse, getBundlesList } from '@/api/bundles-api';
 import { getCustomDetail, CustomListResponse, getCustomsList } from '@/api/customs-api';
-import { getSequenceDetail, SequenceListResponse, getSequencesList, searchSequencesByName } from '@/api/sequences-api';
+import { getSequenceDetail, SequenceListResponse, getSequencesList } from '@/api/sequences-api';
+import { searchSequencesByName } from '@/utils/sequence-utils';
 
 interface MembershipDetailModalProps {
     isOpen: boolean;

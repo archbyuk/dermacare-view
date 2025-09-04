@@ -4,10 +4,12 @@ import { useState, useCallback, useEffect } from 'react';
 import { debounce } from 'lodash';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { Element, getElementsList, searchElementsByName, getElementDetail } from '@/api/element-api';
+import { Element, getElementsList, getElementDetail } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 import { BundleListResponse, getBundlesList, getBundleDetail } from '@/api/bundles-api';
 import { CustomListResponse, getCustomsList, getCustomDetail } from '@/api/customs-api';
-import { SequenceListResponse, getSequencesList, searchSequencesByName, getSequenceDetail } from '@/api/sequences-api';
+import { SequenceListResponse, getSequencesList, getSequenceDetail } from '@/api/sequences-api';
+import { searchSequencesByName } from '@/utils/sequence-utils';
 import { ProcedureInfo } from './standard-detail-types';
 
 interface ProcedureSearchSelectorProps {

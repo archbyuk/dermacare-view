@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Settings, Save, Edit, Package, AlertTriangle, ChevronDown, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
 import { CustomListResponse, getCustomDetail, updateCustom } from '@/api/customs-api';
-import { Element, getElementsList, searchElementsByName } from '@/api/element-api';
+import { Element, getElementsList } from '@/api/element-api';
+import { searchElementsByName } from '@/utils/element-utils';
 import { useModalStore } from '@/store/modal-store';
 
 interface CustomDetailModalProps {
