@@ -88,10 +88,47 @@ export interface BundleActivateResponse {
  */
 export const getBundlesList = async (): Promise<BundleListResponse[]> => {
     try {
+        console.log('🔍 Bundle API 요청 시작');
+        console.log('📍 요청 URL:', instance.defaults.baseURL + '/admin/bundles/');
+        console.log('🌐 전체 요청 URL:', instance.defaults.baseURL + '/admin/bundles/');
+        console.log('🔧 Axios 설정:', {
+            baseURL: instance.defaults.baseURL,
+            timeout: instance.defaults.timeout,
+            withCredentials: instance.defaults.withCredentials
+        });
+        
         const response = await instance.get<BundleListResponse[]>('/admin/bundles/');
+        
+        console.log('✅ Bundle API 응답 성공:', response.status);
+        console.log('📊 응답 데이터 길이:', response.data?.length || 0);
+        
         return response.data;
     } catch (error: unknown) {
-        console.error('Bundle 목록 조회 중 오류:', error);
+        console.error('❌ Bundle 목록 조회 중 오류:', error);
+        
+        if (error instanceof Error) {
+            console.error('🚨 에러 상세 정보:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
+        }
+        
+        // Axios 에러인 경우 추가 정보 출력
+        if (error && typeof error === 'object' && 'config' in error) {
+            const axiosError = error as any;
+            console.error('🌐 Axios 에러 상세:', {
+                url: axiosError.config?.url,
+                baseURL: axiosError.config?.baseURL,
+                method: axiosError.config?.method,
+                headers: axiosError.config?.headers,
+                timeout: axiosError.config?.timeout,
+                code: axiosError.code,
+                status: axiosError.response?.status,
+                statusText: axiosError.response?.statusText
+            });
+        }
+        
         throw new Error(error instanceof Error ? error.message : 'Bundle 목록 조회 중 오류가 발생했습니다.');
     }
 };
