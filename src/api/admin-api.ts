@@ -111,7 +111,7 @@ export async function getSupportedFiles(): Promise<{
 // 관리자 권한 확인
 export async function checkAdminRole(): Promise<{ isAdmin: boolean; message?: string }> {
   try {
-    const response = await instance.get('/admin/check-role');
+    const response = await instance.get('/check-role');
     
     return {
       isAdmin: response.data.is_admin || false,

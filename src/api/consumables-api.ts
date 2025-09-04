@@ -108,7 +108,7 @@ export interface ConsumableActivateResponse {
 export const getConsumablesList = async (search?: string): Promise<ConsumableResponse[]> => {
     try {
         const params = search ? { search } : {};
-        const response = await instance.get<ConsumableResponse[]>('/admin/consumables/', { params });
+        const response = await instance.get<ConsumableResponse[]>('/consumables/', { params });
         return response.data;
     } catch (error: unknown) {
         console.error('소모품 목록 조회 중 오류:', error);
@@ -123,7 +123,7 @@ export const getConsumablesList = async (search?: string): Promise<ConsumableRes
  */
 export const getConsumableDetail = async (consumableId: number): Promise<ConsumableResponse> => {
     try {
-        const response = await instance.get<ConsumableResponse>(`/admin/consumables/${consumableId}`);
+        const response = await instance.get<ConsumableResponse>(`/consumables/${consumableId}`);
         return response.data;
     } catch (error: unknown) {
         console.error('소모품 상세 조회 중 오류:', error);
@@ -138,7 +138,7 @@ export const getConsumableDetail = async (consumableId: number): Promise<Consuma
  */
 export const createConsumable = async (consumableData: ConsumableCreateRequest): Promise<ConsumableCreateResponse> => {
     try {
-        const response = await instance.post<ConsumableCreateResponse>('/admin/consumables/', consumableData);
+        const response = await instance.post<ConsumableCreateResponse>('/consumables/', consumableData);
         return response.data;
     } catch (error: unknown) {
         console.error('소모품 생성 중 오류:', error);
@@ -158,7 +158,7 @@ export const updateConsumable = async (
 ): Promise<ConsumableUpdateResponse> => {
     try {
         const response = await instance.put<ConsumableUpdateResponse>(
-            `/admin/consumables/${consumableId}`, 
+            `/consumables/${consumableId}`, 
             consumableData
         );
         return response.data;
@@ -175,7 +175,7 @@ export const updateConsumable = async (
  */
 export const deleteConsumable = async (consumableId: number): Promise<ConsumableDeleteResponse> => {
     try {
-        const response = await instance.delete<ConsumableDeleteResponse>(`/admin/consumables/${consumableId}`);
+        const response = await instance.delete<ConsumableDeleteResponse>(`/consumables/${consumableId}`);
         return response.data;
     } catch (error: unknown) {
         console.error('소모품 삭제 중 오류:', error);
@@ -191,7 +191,7 @@ export const deleteConsumable = async (consumableId: number): Promise<Consumable
 export const deactivateConsumable = async (consumableId: number): Promise<ConsumableActivateResponse> => {
     try {
         const response = await instance.put<ConsumableActivateResponse>(
-            `/admin/consumables/${consumableId}/deactivate`
+            `/consumables/${consumableId}/deactivate`
         );
         return response.data;
     } catch (error: unknown) {
@@ -208,7 +208,7 @@ export const deactivateConsumable = async (consumableId: number): Promise<Consum
 export const activateConsumable = async (consumableId: number): Promise<ConsumableActivateResponse> => {
     try {
         const response = await instance.put<ConsumableActivateResponse>(
-            `/admin/consumables/${consumableId}/activate`
+            `/consumables/${consumableId}/activate`
         );
         return response.data;
     } catch (error: unknown) {

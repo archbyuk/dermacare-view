@@ -64,7 +64,7 @@ export interface CustomListResponse {
  */
 export const getCustomsList = async (): Promise<CustomListResponse[]> => {
     try {
-        const response = await instance.get('/admin/customs/');        
+        const response = await instance.get('/customs/');        
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 목록 조회 실패:', error);
@@ -77,7 +77,7 @@ export const getCustomsList = async (): Promise<CustomListResponse[]> => {
  */
 export const getCustomDetail = async (group_id: number): Promise<CustomResponse> => {
     try {
-        const response = await instance.get(`/admin/customs/${group_id}`);
+        const response = await instance.get(`/customs/${group_id}`);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 상세 조회 실패:', error);
@@ -90,7 +90,7 @@ export const getCustomDetail = async (group_id: number): Promise<CustomResponse>
  */
 export const createCustom = async (customData: CustomCreateRequest): Promise<CustomResponse> => {
     try {
-        const response = await instance.post('/admin/customs/', customData);
+        const response = await instance.post('/customs/', customData);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 생성 실패:', error);
@@ -103,7 +103,7 @@ export const createCustom = async (customData: CustomCreateRequest): Promise<Cus
  */
 export const updateCustom = async (group_id: number, customData: CustomUpdateRequest): Promise<CustomResponse> => {
     try {
-        const response = await instance.put(`/admin/customs/${group_id}`, customData);
+        const response = await instance.put(`/customs/${group_id}`, customData);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 수정 실패:', error);
@@ -116,7 +116,7 @@ export const updateCustom = async (group_id: number, customData: CustomUpdateReq
  */
 export const deleteCustom = async (group_id: number): Promise<{ status: string; message: string }> => {
     try {
-        const response = await instance.delete(`/admin/customs/${group_id}`);
+        const response = await instance.delete(`/customs/${group_id}`);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 삭제 실패:', error);
@@ -129,7 +129,7 @@ export const deleteCustom = async (group_id: number): Promise<{ status: string; 
  */
 export const deactivateCustom = async (group_id: number): Promise<{ status: string; message: string }> => {
     try {
-        const response = await instance.put(`/admin/customs/${group_id}/deactivate`);
+        const response = await instance.put(`/customs/${group_id}/deactivate`);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 비활성화 실패:', error);
@@ -142,7 +142,7 @@ export const deactivateCustom = async (group_id: number): Promise<{ status: stri
  */
 export const activateCustom = async (group_id: number): Promise<{ status: string; message: string }> => {
     try {
-        const response = await instance.put(`/admin/customs/${group_id}/activate`);
+        const response = await instance.put(`/customs/${group_id}/activate`);
         return response.data;
     } catch (error: unknown) {
         console.error('Custom 활성화 실패:', error);

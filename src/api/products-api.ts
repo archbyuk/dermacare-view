@@ -588,7 +588,7 @@ export const getProductsList = async (
     if (minPrice !== undefined) params.append('min_price', minPrice.toString());
     if (maxPrice !== undefined) params.append('max_price', maxPrice.toString());
 
-    const response = await instance.get(`/api/admin-tables/products/?${params.toString()}`);
+    const response = await instance.get(`/products/?${params.toString()}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Product 목록 조회 실패:', error);
@@ -612,7 +612,7 @@ export const getProductsByProcedure = async (
     if (customId !== undefined) params.append('custom_id', customId.toString());
     if (sequenceId !== undefined) params.append('sequence_id', sequenceId.toString());
 
-    const response = await instance.get(`/api/admin-tables/products/by-procedure?${params.toString()}`);
+    const response = await instance.get(`/products/by-procedure?${params.toString()}`);
     return response.data;
   } catch (error: unknown) {
     console.error('시술별 Product 조회 실패:', error);
@@ -625,7 +625,7 @@ export const getProductsByProcedure = async (
  */
 export const createProduct = async (productData: ProductCreateRequest): Promise<{ success: boolean; message: string; product_id?: number; standard_info_id?: number; event_info_id?: number }> => {
   try {
-    const response = await instance.post('/api/admin-tables/products/', productData);
+    const response = await instance.post('/products/', productData);
     return response.data;
   } catch (error: unknown) {
     console.error('Product 생성 실패:', error);
@@ -638,7 +638,7 @@ export const createProduct = async (productData: ProductCreateRequest): Promise<
  */
 export const getStandardProductDetail = async (productId: number): Promise<ProductDetailApiResponse> => {
   try {
-    const response = await instance.get(`/api/admin-tables/products/standard/${productId}`);
+    const response = await instance.get(`/products/standard/${productId}`);
     return response.data; // 백엔드 응답 구조에 맞춰 .data 제거
   } catch (error: unknown) {
     console.error('Standard Product 상세 조회 실패:', error);
@@ -651,7 +651,7 @@ export const getStandardProductDetail = async (productId: number): Promise<Produ
  */
 export const getEventProductDetail = async (productId: number): Promise<ProductDetailApiResponse> => {
   try {
-    const response = await instance.get(`/api/admin-tables/products/event/${productId}`);
+    const response = await instance.get(`/products/event/${productId}`);
     return response.data; // 백엔드 응답 구조에 맞춰 .data 추가
   } catch (error: unknown) {
     console.error('Event Product 상세 조회 실패:', error);
@@ -666,7 +666,7 @@ export const getEventProductDetail = async (productId: number): Promise<ProductD
  */
 export const updateEventProduct = async (productId: number, updateData: EventProductUpdateRequest): Promise<ProductResponse> => {
   try {
-    const response = await instance.put(`/api/admin-tables/products/event/${productId}`, updateData);
+    const response = await instance.put(`/products/event/${productId}`, updateData);
     return response.data; // 백엔드 응답 구조에 맞춰 .data 추가
   } catch (error: unknown) {
     console.error('Event Product 수정 실패:', error);
@@ -679,7 +679,7 @@ export const updateEventProduct = async (productId: number, updateData: EventPro
  */
 export const deleteStandardProduct = async (productId: number): Promise<void> => {
   try {
-    await instance.delete(`/api/admin-tables/products/standard/${productId}`);
+    await instance.delete(`/products/standard/${productId}`);
   } catch (error: unknown) {
     console.error('Standard Product 삭제 실패:', error);
     throw new Error(error instanceof Error ? error.message : 'Standard Product 삭제에 실패했습니다.');
@@ -691,7 +691,7 @@ export const deleteStandardProduct = async (productId: number): Promise<void> =>
  */
 export const deleteEventProduct = async (productId: number): Promise<void> => {
   try {
-    await instance.delete(`/api/admin-tables/products/event/${productId}`);
+    await instance.delete(`/products/event/${productId}`);
   } catch (error: unknown) {
     console.error('Event Product 삭제 실패:', error);
     throw new Error(error instanceof Error ? error.message : 'Event Product 삭제에 실패했습니다.');
@@ -703,7 +703,7 @@ export const deleteEventProduct = async (productId: number): Promise<void> => {
  */
 export const activateStandardProduct = async (productId: number): Promise<void> => {
   try {
-    await instance.post(`/api/admin-tables/products/standard/${productId}/activate`);
+    await instance.post(`/products/standard/${productId}/activate`);
   } catch (error: unknown) {
     console.error('Standard Product 활성화 실패:', error);
     throw new Error(error instanceof Error ? error.message : 'Standard Product 활성화에 실패했습니다.');
@@ -715,7 +715,7 @@ export const activateStandardProduct = async (productId: number): Promise<void> 
  */
 export const activateEventProduct = async (productId: number): Promise<void> => {
   try {
-    await instance.post(`/api/admin-tables/products/event/${productId}/activate`);
+    await instance.post(`/products/event/${productId}/activate`);
   } catch (error: unknown) {
     console.error('Event Product 활성화 실패:', error);
     throw new Error(error instanceof Error ? error.message : 'Event Product 활성화에 실패했습니다.');
@@ -779,7 +779,7 @@ export const updateStandardProduct = async (
   updateData: StandardProductUpdateRequest
 ): Promise<ProductDetailResponse> => {
   try {
-    const response = await instance.put(`/api/admin-tables/products/standard/${productId}`, updateData);
+    const response = await instance.put(`/products/standard/${productId}`, updateData);
     return response.data.data;
   } catch (error: unknown) {
     console.error('Standard Product 수정 실패:', error);
@@ -828,7 +828,7 @@ export const getStandardInfoList = async (
 
     if (search) params.append('search', search);
 
-    const response = await instance.get(`/api/admin-tables/products/info/standard?${params.toString()}`);
+    const response = await instance.get(`/products/info/standard?${params.toString()}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Standard Info 목록 조회 실패:', error);
@@ -873,7 +873,7 @@ export const getEventInfoList = async (
 
     if (search) params.append('search', search);
 
-    const response = await instance.get(`/api/admin-tables/products/info/event?${params.toString()}`);
+    const response = await instance.get(`/products/info/event?${params.toString()}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Event Info 목록 조회 실패:', error);
@@ -892,7 +892,7 @@ export interface StandardInfoDetailResponse {
  */
 export const getStandardInfoDetail = async (infoId: number): Promise<StandardInfoDetailResponse> => {
   try {
-    const response = await instance.get(`/api/admin-tables/products/info/standard/${infoId}`);
+    const response = await instance.get(`/products/info/standard/${infoId}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Standard Info 상세 조회 실패:', error);
@@ -911,12 +911,10 @@ export interface EventInfoDetailResponse {
  */
 export const getEventInfoDetail = async (infoId: number): Promise<EventInfoDetailResponse> => {
   try {
-    const response = await instance.get(`/api/admin-tables/products/info/event/${infoId}`);
+    const response = await instance.get(`/products/info/event/${infoId}`);
     return response.data;
   } catch (error: unknown) {
     console.error('Event Info 상세 조회 실패:', error);
     throw new Error(error instanceof Error ? error.message : 'Event Info 상세 정보를 불러오는데 실패했습니다.');
   }
 };
-
-
