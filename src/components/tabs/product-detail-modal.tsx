@@ -121,14 +121,14 @@ export function ProductDetailModal({
                                     <div className="flex items-center justify-between mt-1">
                                         <span className="text-sm text-gray-600">기존가</span>
                                         <span className="text-sm text-gray-400 line-through">
-                                            {detail.Original_Price.toLocaleString()}원
+                                            {detail.Original_Price?.toLocaleString() || '0'}원
                                         </span>
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-gray-600">판매가</span>
                                     <span className="text-lg font-semibold text-gray-900">
-                                        {detail.Sell_Price?.toLocaleString()}원
+                                        {detail.Sell_Price?.toLocaleString() || '0'}원
                                     </span>
                                 </div>
                                 {detail.Discount_Rate && detail.Discount_Rate > 0 && (

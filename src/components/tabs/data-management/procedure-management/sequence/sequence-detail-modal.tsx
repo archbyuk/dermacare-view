@@ -750,7 +750,7 @@ export default function SequenceDetailModal({ isOpen, onClose, onSuccess, sequen
                                                                         <p className="text-xs text-gray-600 mt-1">{step.element_info.description}</p>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="text-sm font-semibold text-gray-900">{step.element_info.procedure_cost.toLocaleString()}원</p>
+                                                                        <p className="text-sm font-semibold text-gray-900">{step.element_info.procedure_cost?.toLocaleString() || '0'}원</p>
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex justify-between w-10/12">
@@ -779,7 +779,7 @@ export default function SequenceDetailModal({ isOpen, onClose, onSuccess, sequen
                                                                         <p className="text-xs text-gray-600 mt-1">{step.bundle_info.description || '설명 없음'}</p>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="text-sm font-semibold text-gray-900">{step.bundle_info.element_cost.toLocaleString()}원</p>
+                                                                        <p className="text-sm font-semibold text-gray-900">{step.bundle_info.element_cost?.toLocaleString() || '0'}원</p>
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex justify-between w-10/12">
@@ -850,7 +850,7 @@ export default function SequenceDetailModal({ isOpen, onClose, onSuccess, sequen
                                                                         </div>
                                                                         {/* 가격 표기 영역 */}
                                                                         <div className="text-right ml-3">
-                                                                            <p className="text-sm font-semibold text-gray-900">{step.element_info.procedure_cost.toLocaleString()} 원</p>
+                                                                            <p className="text-sm font-semibold text-gray-900">{step.element_info.procedure_cost?.toLocaleString() || '0'} 원</p>
                                                                         </div>
                                                                     </div>
                                                                     
@@ -858,7 +858,7 @@ export default function SequenceDetailModal({ isOpen, onClose, onSuccess, sequen
                                                                     <div className="grid grid-cols-2 gap-2 text-xs">
                                                                     <div>
                                                                         <span className="text-gray-500">가격:</span>
-                                                                        <span className="ml-1 text-gray-900">{step.element_info.price.toLocaleString()}원</span>
+                                                                        <span className="ml-1 text-gray-900">{step.element_info.price?.toLocaleString() || '0'}원</span>
                                                                     </div>
                                                                     <div>
                                                                             <span className="text-gray-500">플랜 주기:</span>
