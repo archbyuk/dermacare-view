@@ -1,7 +1,6 @@
 'use client';
 
 import { useModalStore } from '@/store/modal-store';
-import { Package } from 'lucide-react';
 import ElementCreateModal from '@/components/tabs/data-management/procedure-management/element/element-create-modal';
 import ElementDetailModal from '@/components/tabs/data-management/procedure-management/element/element-detail-modal';
 import BundleCreateModal from '@/components/tabs/data-management/procedure-management/bundle/bundle-create-modal';
