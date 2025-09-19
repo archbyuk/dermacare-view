@@ -266,25 +266,23 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       
       console.log('🔄 Starting to load all procedures...');
       
-      // 모든 시술 데이터를 병렬로 로드
-      await Promise.all([
-        loadElements().catch(err => {
-          console.error('❌ loadElements failed:', err);
-          throw err;
-        }),
-        loadBundles().catch(err => {
-          console.error('❌ loadBundles failed:', err);
-          throw err;
-        }),
-        loadCustoms().catch(err => {
-          console.error('❌ loadCustoms failed:', err);
-          throw err;
-        }),
-        loadSequences().catch(err => {
-          console.error('❌ loadSequences failed:', err);
-          throw err;
-        })
+      // 모든 시술 데이터를 병렬로 로드 (실패해도 계속 진행)
+      const results = await Promise.allSettled([
+        loadElements(),
+        loadBundles(),
+        loadCustoms(),
+        loadSequences()
       ]);
+      
+      // 결과 확인
+      results.forEach((result, index) => {
+        const apiNames = ['loadElements', 'loadBundles', 'loadCustoms', 'loadSequences'];
+        if (result.status === 'rejected') {
+          console.error(`❌ ${apiNames[index]} failed:`, result.reason);
+        } else {
+          console.log(`✅ ${apiNames[index]} completed successfully`);
+        }
+      });
       
       console.log('✅ All procedures loaded successfully');
     } catch (error) {
@@ -376,33 +374,40 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       invalidateCache('customs');
       invalidateCache('sequences');
       
-      // 모든 시술 데이터를 병렬로 새로고침
-      const [elementsData, bundlesData, customsData, sequencesData] = await Promise.all([
-        getElementsList().catch(err => {
-          console.error('❌ getElementsList failed:', err);
-          throw err;
-        }),
-        getBundlesList().catch(err => {
-          console.error('❌ getBundlesList failed:', err);
-          throw err;
-        }),
-        getCustomsList().catch(err => {
-          console.error('❌ getCustomsList failed:', err);
-          throw err;
-        }),
-        getSequencesList().catch(err => {
-          console.error('❌ getSequencesList failed:', err);
-          throw err;
-        })
+      // 모든 시술 데이터를 병렬로 새로고침 (실패해도 계속 진행)
+      const results = await Promise.allSettled([
+        getElementsList(),
+        getBundlesList(),
+        getCustomsList(),
+        getSequencesList()
       ]);
       
-      console.log('✅ All procedures force refreshed successfully');
+      // 결과 확인 및 데이터 설정
+      const apiNames = ['getElementsList', 'getBundlesList', 'getCustomsList', 'getSequencesList'];
       
-      // 모든 데이터 설정
-      setElements(elementsData);
-      setBundles(bundlesData);
-      setCustoms(customsData);
-      setSequences(sequencesData);
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          console.log(`✅ ${apiNames[index]} completed successfully`);
+          switch (index) {
+            case 0:
+              setElements(result.value as Element[]);
+              break;
+            case 1:
+              setBundles(result.value as BundleListResponse[]);
+              break;
+            case 2:
+              setCustoms(result.value as CustomListResponse[]);
+              break;
+            case 3:
+              setSequences(result.value as SequenceResponse[]);
+              break;
+          }
+        } else {
+          console.error(`❌ ${apiNames[index]} failed:`, result.reason);
+        }
+      });
+      
+      console.log('✅ All procedures force refresh completed');
     } catch (error) {
       console.error('❌ forceRefreshAllProcedures failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to refresh all procedures');
