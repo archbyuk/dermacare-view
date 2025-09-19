@@ -90,10 +90,17 @@ export interface BundleActivateResponse {
  */
 export const getBundlesList = async (): Promise<BundleListResponse[]> => {
     try {
+        console.log('🔄 [getBundlesList] Starting API call to /bundles/');
         const response = await instance.get<BundleListResponse[]>('/bundles/');
+        console.log('✅ [getBundlesList] API call successful, data length:', response.data?.length || 0);
         return response.data;
     } catch (error: unknown) {
-        console.error('Bundle 목록 조회 중 오류:', error);
+        console.error('❌ [getBundlesList] Bundle 목록 조회 중 오류:', error);
+        console.error('❌ [getBundlesList] Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            response: error instanceof Error && 'response' in error ? (error as { response?: unknown }).response : undefined
+        });
         throw new Error(error instanceof Error ? error.message : 'Bundle 목록 조회 중 오류가 발생했습니다.');
     }
 };
