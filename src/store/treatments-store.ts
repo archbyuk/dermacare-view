@@ -59,6 +59,8 @@ export const useTreatmentsStore = create<TreatmentsState>()(
             page_size: 10000,
             product_type: 'all'
           });
+
+          console.log('response', response);
           
           
           set({
