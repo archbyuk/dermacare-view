@@ -165,16 +165,20 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
     
     // 캐시가 유효하면 API 호출하지 않음
     if (isCacheValid('elements')) {
+      console.log('📦 Elements cache is valid, skipping API call');
       return;
     }
     
     try {
+      console.log('🔄 Loading elements...');
       setLoading(true);
       setError(null);
       
       const elementsData = await getElementsList();
+      console.log('✅ Elements loaded successfully:', elementsData.length, 'items');
       setElements(elementsData);
     } catch (error) {
+      console.error('❌ loadElements failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to load elements');
     } finally {
       setLoading(false);
@@ -186,16 +190,20 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
     
     // 캐시가 유효하면 API 호출하지 않음
     if (isCacheValid('bundles')) {
+      console.log('📦 Bundles cache is valid, skipping API call');
       return;
     }
     
     try {
+      console.log('🔄 Loading bundles...');
       setLoading(true);
       setError(null);
       
       const bundlesData = await getBundlesList();
+      console.log('✅ Bundles loaded successfully:', bundlesData.length, 'items');
       setBundles(bundlesData);
     } catch (error) {
+      console.error('❌ loadBundles failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to load bundles');
     } finally {
       setLoading(false);
@@ -207,16 +215,20 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
     
     // 캐시가 유효하면 API 호출하지 않음
     if (isCacheValid('customs')) {
+      console.log('📦 Customs cache is valid, skipping API call');
       return;
     }
     
     try {
+      console.log('🔄 Loading customs...');
       setLoading(true);
       setError(null);
       
       const customsData = await getCustomsList();
+      console.log('✅ Customs loaded successfully:', customsData.length, 'items');
       setCustoms(customsData);
     } catch (error) {
+      console.error('❌ loadCustoms failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to load customs');
     } finally {
       setLoading(false);
@@ -252,14 +264,31 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       setLoading(true);
       setError(null);
       
+      console.log('🔄 Starting to load all procedures...');
+      
       // 모든 시술 데이터를 병렬로 로드
       await Promise.all([
-        loadElements(),
-        loadBundles(),
-        loadCustoms(),
-        loadSequences()
+        loadElements().catch(err => {
+          console.error('❌ loadElements failed:', err);
+          throw err;
+        }),
+        loadBundles().catch(err => {
+          console.error('❌ loadBundles failed:', err);
+          throw err;
+        }),
+        loadCustoms().catch(err => {
+          console.error('❌ loadCustoms failed:', err);
+          throw err;
+        }),
+        loadSequences().catch(err => {
+          console.error('❌ loadSequences failed:', err);
+          throw err;
+        })
       ]);
+      
+      console.log('✅ All procedures loaded successfully');
     } catch (error) {
+      console.error('❌ loadAllProcedures failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to load all procedures');
     } finally {
       setLoading(false);
@@ -339,6 +368,8 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       setLoading(true);
       setError(null);
       
+      console.log('🔄 Starting force refresh all procedures...');
+      
       // 모든 캐시 무효화
       invalidateCache('elements');
       invalidateCache('bundles');
@@ -347,11 +378,25 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       
       // 모든 시술 데이터를 병렬로 새로고침
       const [elementsData, bundlesData, customsData, sequencesData] = await Promise.all([
-        getElementsList(),
-        getBundlesList(),
-        getCustomsList(),
-        getSequencesList()
+        getElementsList().catch(err => {
+          console.error('❌ getElementsList failed:', err);
+          throw err;
+        }),
+        getBundlesList().catch(err => {
+          console.error('❌ getBundlesList failed:', err);
+          throw err;
+        }),
+        getCustomsList().catch(err => {
+          console.error('❌ getCustomsList failed:', err);
+          throw err;
+        }),
+        getSequencesList().catch(err => {
+          console.error('❌ getSequencesList failed:', err);
+          throw err;
+        })
       ]);
+      
+      console.log('✅ All procedures force refreshed successfully');
       
       // 모든 데이터 설정
       setElements(elementsData);
@@ -359,6 +404,7 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       setCustoms(customsData);
       setSequences(sequencesData);
     } catch (error) {
+      console.error('❌ forceRefreshAllProcedures failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to refresh all procedures');
     } finally {
       setLoading(false);
