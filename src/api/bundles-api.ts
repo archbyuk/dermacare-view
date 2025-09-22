@@ -90,10 +90,36 @@ export interface BundleActivateResponse {
  */
 export const getBundlesList = async (): Promise<BundleListResponse[]> => {
     try {
+        console.log('[getBundlesList] Starting API call to /bundles/');
         const response = await instance.get<BundleListResponse[]>('/bundles/');
+        console.log('[getBundlesList] API call successful, data length:', response.data?.length || 0);
         return response.data;
     } catch (error: unknown) {
-        console.error('Bundle 목록 조회 중 오류:', error);
+        console.error('[getBundlesList] Bundle 목록 조회 중 오류:', error);
+        
+        // AxiosError인 경우 더 자세한 정보 출력
+        if (error instanceof AxiosError) {
+            console.error('[getBundlesList] AxiosError details:', {
+                message: error.message,
+                code: error.code,
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+                config: {
+                    url: error.config?.url,
+                    method: error.config?.method,
+                    headers: error.config?.headers,
+                    baseURL: error.config?.baseURL
+                }
+            });
+        } else {
+            console.error('[getBundlesList] Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                name: error instanceof Error ? error.name : 'UnknownError',
+                stack: error instanceof Error ? error.stack : undefined
+            });
+        }
+        
         throw new Error(error instanceof Error ? error.message : 'Bundle 목록 조회 중 오류가 발생했습니다.');
     }
 };

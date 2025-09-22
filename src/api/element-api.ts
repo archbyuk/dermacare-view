@@ -101,9 +101,36 @@ export interface GlobalSettings {
  */
 export const getElementsList = async (): Promise<Element[]> => {
   try {
+    console.log('[getElementsList] Starting API call to /elements/');
     const response = await instance.get('/elements/');
+    console.log('[getElementsList] API call successful, data length:', response.data?.length || 0);
     return response.data;
   } catch (error: unknown) {
+    console.error('[getElementsList] Element 목록 조회 중 오류:', error);
+    
+    // AxiosError인 경우 더 자세한 정보 출력
+    if (error instanceof AxiosError) {
+      console.error('[getElementsList] AxiosError details:', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          baseURL: error.config?.baseURL
+        }
+      });
+    } else {
+      console.error('[getElementsList] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'UnknownError',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+    }
+    
     throw new Error(error instanceof Error ? error.message : 'Element 목록 조회 중 오류가 발생했습니다.');
   }
 };

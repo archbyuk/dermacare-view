@@ -1,6 +1,7 @@
 'use server'
 
 import { instance } from './axios-instance';
+import { AxiosError } from 'axios';
 import { Element } from './element-api';
 
 // ============================================================================
@@ -66,10 +67,36 @@ export interface CustomListResponse {
  */
 export const getCustomsList = async (): Promise<CustomListResponse[]> => {
     try {
-        const response = await instance.get('/customs/');        
+        console.log('🔄 [getCustomsList] Starting API call to /customs/');
+        const response = await instance.get('/customs/');
+        console.log('✅ [getCustomsList] API call successful, data length:', response.data?.length || 0);
         return response.data;
     } catch (error: unknown) {
-        console.error('Custom 목록 조회 실패:', error);
+        console.error('[getCustomsList] Custom 목록 조회 중 오류:', error);
+        
+        // AxiosError인 경우 더 자세한 정보 출력
+        if (error instanceof AxiosError) {
+            console.error('[getCustomsList] AxiosError details:', {
+                message: error.message,
+                code: error.code,
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+                config: {
+                    url: error.config?.url,
+                    method: error.config?.method,
+                    headers: error.config?.headers,
+                    baseURL: error.config?.baseURL
+                }
+            });
+        } else {
+            console.error('[getCustomsList] Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                name: error instanceof Error ? error.name : 'UnknownError',
+                stack: error instanceof Error ? error.stack : undefined
+            });
+        }
+        
         throw new Error(error instanceof Error ? error.message : 'Custom 목록 조회 중 오류가 발생했습니다.');
     }
 };

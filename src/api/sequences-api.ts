@@ -1,6 +1,7 @@
 'use server'
 
 import { instance } from './axios-instance';
+import { AxiosError } from 'axios';
 
 // ============================================================================
 // 타입 정의
@@ -152,10 +153,36 @@ export interface SequenceListResponse {
  */
 export const getSequencesList = async (): Promise<SequenceListResponse[]> => {
   try {
+    console.log('[getSequencesList] Starting API call to /sequences/');
     const response = await instance.get('/sequences/');
+    console.log('[getSequencesList] API call successful, data length:', response.data?.length || 0);
     return response.data;
   } catch (error: unknown) {
-    console.error('Sequence 목록 조회 실패:', error);
+    console.error('[getSequencesList] Sequence 목록 조회 중 오류:', error);
+    
+    // AxiosError인 경우 더 자세한 정보 출력
+    if (error instanceof AxiosError) {
+      console.error('[getSequencesList] AxiosError details:', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          baseURL: error.config?.baseURL
+        }
+      });
+    } else {
+      console.error('[getSequencesList] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        name: error instanceof Error ? error.name : 'UnknownError',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+    }
+    
     throw new Error(error instanceof Error ? error.message : 'Sequence 목록을 불러오는데 실패했습니다.');
   }
 };
