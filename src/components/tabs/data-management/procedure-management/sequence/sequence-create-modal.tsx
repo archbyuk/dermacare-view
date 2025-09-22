@@ -154,17 +154,63 @@ export default function SequenceCreateModal({ isOpen, onClose, onSuccess, onRefr
 
     const loadAllData = async () => {
         try {
-            const [elements, bundles, customs] = await Promise.all([
-                getElementsList(),
-                getBundlesList(),
-                getCustomsList()
+            console.log('🔄 Starting to load sequence create modal data...');
+            
+            // 모든 데이터를 병렬로 로드 (개별 실패 허용)
+            const results = await Promise.allSettled([
+                getElementsList().catch(err => {
+                    console.error('❌ getElementsList failed:', err);
+                    throw err;
+                }),
+                getBundlesList().catch(err => {
+                    console.error('❌ getBundlesList failed:', err);
+                    throw err;
+                }),
+                getCustomsList().catch(err => {
+                    console.error('❌ getCustomsList failed:', err);
+                    throw err;
+                })
             ]);
             
-            setAllElements(elements);
-            setAllBundles(bundles);
-            setAllCustoms(customs);
+            // 결과 분석
+            const successCount = results.filter(result => result.status === 'fulfilled').length;
+            const failureCount = results.filter(result => result.status === 'rejected').length;
+            
+            console.log(`✅ Sequence create modal data loading completed: ${successCount} successful, ${failureCount} failed`);
+            
+            // elements 결과 처리
+            if (results[0].status === 'fulfilled') {
+                setAllElements(results[0].value);
+                console.log('✅ Elements loaded successfully');
+            } else {
+                console.error('❌ Elements loading failed:', results[0].reason);
+            }
+            
+            // bundles 결과 처리
+            if (results[1].status === 'fulfilled') {
+                setAllBundles(results[1].value);
+                console.log('✅ Bundles loaded successfully');
+            } else {
+                console.error('❌ Bundles loading failed:', results[1].reason);
+            }
+            
+            // customs 결과 처리
+            if (results[2].status === 'fulfilled') {
+                setAllCustoms(results[2].value);
+                console.log('✅ Customs loaded successfully');
+            } else {
+                console.error('❌ Customs loading failed:', results[2].reason);
+            }
+            
+            // 일부만 성공해도 전체 성공으로 처리
+            if (successCount > 0) {
+                console.log('✅ Some sequence create modal data loaded successfully');
+            } else {
+                console.error('❌ All sequence create modal data failed to load');
+            }
+            
         } catch (error) {
-            console.error('데이터 로드 실패:', error);
+            console.error('❌ loadAllData failed:', error);
         }
     };
 
