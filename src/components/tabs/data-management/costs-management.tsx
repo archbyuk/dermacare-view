@@ -30,25 +30,57 @@ export default function CostsTab() {
             setLoading(true);
             setError(null);
             
-            // 소모품 데이터 로드
-            const consumablesData = await getConsumablesList();
-            setConsumables(consumablesData);
+            console.log('🔄 Starting to load costs management data...');
             
-            // Global 설정 데이터 로드
-            const globalData = await getGlobalSettings();
-            setGlobalSettings(globalData);
+            // 소모품 데이터와 Global 설정 데이터를 병렬로 로드 (개별 실패 허용)
+            const results = await Promise.allSettled([
+                getConsumablesList().catch(err => {
+                    console.error('❌ getConsumablesList failed:', err);
+                    throw err;
+                }),
+                getGlobalSettings().catch(err => {
+                    console.error('❌ getGlobalSettings failed:', err);
+                    throw err;
+                })
+            ]);
             
-        } 
-        
-        catch (err: unknown) {
+            // 결과 분석
+            const successCount = results.filter(result => result.status === 'fulfilled').length;
+            const failureCount = results.filter(result => result.status === 'rejected').length;
+            
+            console.log(`✅ Costs management data loading completed: ${successCount} successful, ${failureCount} failed`);
+            
+            // 소모품 데이터 결과 처리
+            if (results[0].status === 'fulfilled') {
+                setConsumables(results[0].value);
+                console.log('✅ Consumables loaded successfully');
+            } else {
+                console.error('❌ Consumables loading failed:', results[0].reason);
+            }
+            
+            // Global 설정 데이터 결과 처리
+            if (results[1].status === 'fulfilled') {
+                setGlobalSettings(results[1].value);
+                console.log('✅ Global settings loaded successfully');
+            } else {
+                console.error('❌ Global settings loading failed:', results[1].reason);
+            }
+            
+            // 일부만 성공해도 전체 성공으로 처리
+            if (successCount > 0) {
+                console.log('✅ Some costs management data loaded successfully');
+            } else {
+                console.error('❌ All costs management data failed to load');
+                setError('모든 데이터 로드에 실패했습니다.');
+            }
+            
+        } catch (err: unknown) {
+            console.error('❌ loadData failed:', err);
             if (err instanceof Error) {
                 setError(err.message);
-            }
-            
-            else {
+            } else {
                 setError('알 수 없는 오류가 발생했습니다');
             }
-            
         } finally {
             setLoading(false);
         }

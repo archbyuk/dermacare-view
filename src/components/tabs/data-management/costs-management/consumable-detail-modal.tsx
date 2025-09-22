@@ -325,7 +325,7 @@ export default function ConsumableDetailModal({
                                                     <span className="text-sm text-gray-700">단가</span>
                                                 </div>
                                                 <span className="text-sm font-medium text-gray-900">
-                                                    {displayConsumable.unit_price.toLocaleString()}원
+                                                    {(displayConsumable.unit_price || 0).toLocaleString()}원
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">

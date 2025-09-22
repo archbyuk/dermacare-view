@@ -268,7 +268,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
                                             <div className="text-right ml-3 flex-shrink-0">
                                                 {treatment.Original_Price && treatment.Original_Price > treatment.Sell_Price && (
                                                     <p className="text-xs text-gray-400 line-through mb-0.5">
-                                                        {treatment.Original_Price.toLocaleString()}원
+                                                        {(treatment.Original_Price || 0).toLocaleString()}원
                                                     </p>
                                                 )}
                                                 <p className="text-sm font-medium text-gray-900 pr-1.5">

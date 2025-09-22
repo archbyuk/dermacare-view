@@ -175,12 +175,12 @@ export default function ConsumablesTab({
                                                 {/* 오른쪽 컨테이너 */}
                                                 <div className="flex flex-col text-left justify-start items-start w-32 mt-4.5 gap-1">
                                                     <p className="text-sm font-medium text-gray-900">
-                                                        <span className='text-gray-500 text-xs'>단위 비용: </span>{consumable.unit_price.toLocaleString()}원
+                                                        <span className='text-gray-500 text-xs'>단위 비용: </span>{(consumable.unit_price || 0).toLocaleString()}원
                                                     </p>
 
                                                     {consumable.vat > 0 && (
                                                         <p className="text-xs text-gray-400">
-                                                            VAT: {consumable.vat.toLocaleString()} 원
+                                                            VAT: {(consumable.vat || 0).toLocaleString()} 원
                                                         </p>
                                                     )}
                                                 </div>
