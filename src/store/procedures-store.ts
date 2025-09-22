@@ -266,25 +266,39 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       
       console.log('🔄 Starting to load all procedures...');
       
-      // 모든 시술 데이터를 병렬로 로드 (실패해도 계속 진행)
+      // 모든 시술 데이터를 병렬로 로드 (개별 실패 허용)
       const results = await Promise.allSettled([
-        loadElements(),
-        loadBundles(),
-        loadCustoms(),
-        loadSequences()
+        loadElements().catch(err => {
+          console.error('❌ loadElements failed:', err);
+          throw err;
+        }),
+        loadBundles().catch(err => {
+          console.error('❌ loadBundles failed:', err);
+          throw err;
+        }),
+        loadCustoms().catch(err => {
+          console.error('❌ loadCustoms failed:', err);
+          throw err;
+        }),
+        loadSequences().catch(err => {
+          console.error('❌ loadSequences failed:', err);
+          throw err;
+        })
       ]);
       
-      // 결과 확인
-      results.forEach((result, index) => {
-        const apiNames = ['loadElements', 'loadBundles', 'loadCustoms', 'loadSequences'];
-        if (result.status === 'rejected') {
-          console.error(`❌ ${apiNames[index]} failed:`, result.reason);
-        } else {
-          console.log(`✅ ${apiNames[index]} completed successfully`);
-        }
-      });
+      // 결과 분석
+      const successCount = results.filter(result => result.status === 'fulfilled').length;
+      const failureCount = results.filter(result => result.status === 'rejected').length;
       
-      console.log('✅ All procedures loaded successfully');
+      console.log(`✅ Procedures loading completed: ${successCount} successful, ${failureCount} failed`);
+      
+      // 일부만 성공해도 전체 성공으로 처리
+      if (successCount > 0) {
+        console.log('✅ Some procedures loaded successfully');
+      } else {
+        console.error('❌ All procedures failed to load');
+        setError('모든 시술 데이터 로드에 실패했습니다.');
+      }
     } catch (error) {
       console.error('❌ loadAllProcedures failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to load all procedures');
@@ -374,40 +388,70 @@ export const useProceduresStore = create<ProceduresState>((set, get) => ({
       invalidateCache('customs');
       invalidateCache('sequences');
       
-      // 모든 시술 데이터를 병렬로 새로고침 (실패해도 계속 진행)
+      // 모든 시술 데이터를 병렬로 새로고침 (개별 실패 허용)
       const results = await Promise.allSettled([
-        getElementsList(),
-        getBundlesList(),
-        getCustomsList(),
-        getSequencesList()
+        getElementsList().catch(err => {
+          console.error('❌ getElementsList failed:', err);
+          throw err;
+        }),
+        getBundlesList().catch(err => {
+          console.error('❌ getBundlesList failed:', err);
+          throw err;
+        }),
+        getCustomsList().catch(err => {
+          console.error('❌ getCustomsList failed:', err);
+          throw err;
+        }),
+        getSequencesList().catch(err => {
+          console.error('❌ getSequencesList failed:', err);
+          throw err;
+        })
       ]);
       
-      // 결과 확인 및 데이터 설정
-      const apiNames = ['getElementsList', 'getBundlesList', 'getCustomsList', 'getSequencesList'];
+      // 결과 분석 및 데이터 설정
+      let successCount = 0;
       
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          console.log(`✅ ${apiNames[index]} completed successfully`);
-          switch (index) {
-            case 0:
-              setElements(result.value as Element[]);
-              break;
-            case 1:
-              setBundles(result.value as BundleListResponse[]);
-              break;
-            case 2:
-              setCustoms(result.value as CustomListResponse[]);
-              break;
-            case 3:
-              setSequences(result.value as SequenceResponse[]);
-              break;
-          }
-        } else {
-          console.error(`❌ ${apiNames[index]} failed:`, result.reason);
-        }
-      });
+      // elements 결과 처리
+      if (results[0].status === 'fulfilled') {
+        setElements(results[0].value);
+        successCount++;
+        console.log('✅ Elements refreshed successfully');
+      } else {
+        console.error('❌ Elements refresh failed:', results[0].reason);
+      }
       
-      console.log('✅ All procedures force refresh completed');
+      // bundles 결과 처리
+      if (results[1].status === 'fulfilled') {
+        setBundles(results[1].value);
+        successCount++;
+        console.log('✅ Bundles refreshed successfully');
+      } else {
+        console.error('❌ Bundles refresh failed:', results[1].reason);
+      }
+      
+      // customs 결과 처리
+      if (results[2].status === 'fulfilled') {
+        setCustoms(results[2].value);
+        successCount++;
+        console.log('✅ Customs refreshed successfully');
+      } else {
+        console.error('❌ Customs refresh failed:', results[2].reason);
+      }
+      
+      // sequences 결과 처리
+      if (results[3].status === 'fulfilled') {
+        setSequences(results[3].value);
+        successCount++;
+        console.log('✅ Sequences refreshed successfully');
+      } else {
+        console.error('❌ Sequences refresh failed:', results[3].reason);
+      }
+      
+      console.log(`✅ Force refresh completed: ${successCount} successful, ${4 - successCount} failed`);
+      
+      if (successCount === 0) {
+        setError('모든 시술 데이터 새로고침에 실패했습니다.');
+      }
     } catch (error) {
       console.error('❌ forceRefreshAllProcedures failed:', error);
       setError(error instanceof Error ? error.message : 'Failed to refresh all procedures');
