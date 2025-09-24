@@ -5,8 +5,6 @@ import { debounce } from 'lodash';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-
-import { searchElements, searchBundles, searchCustoms, searchSequences } from '@/utils/searchUtils';
 import BundleTab from './procedure-management/bundle/bundle-tab';
 import ElementTab from './procedure-management/element/element-tab';
 import CustomTab from './procedure-management/custom/custom-tab';
@@ -22,14 +20,7 @@ export default function ProceduresManagement() {
 
   // Zustand store 사용
   const {
-    elements,
-    bundles,
-    customs,
-    sequences,
-    loading,
-    error,
     loadAllProcedures,
-    forceRefreshAllProcedures
   } = useProceduresStore();
 
   // 데이터 로드 함수
@@ -111,7 +102,7 @@ export default function ProceduresManagement() {
                 variant="ghost"
                 size="default"
                 onClick={() => setActiveSubTab(tab.id)}
-                className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[20vw] max-w-[20vw] ${
+                className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[80px] max-w-[120px] ${
                 activeSubTab === tab.id 
                     ? 'bg-gray-50 text-gray-900 font-semibold' 
                     : 'text-gray-400 font-semibold hover:bg-gray-50 hover:text-gray-800'
@@ -139,7 +130,7 @@ export default function ProceduresManagement() {
         </div>
       
         {/* 서브 탭 내용 */}
-        <div>
+        <div className="w-full">
             {activeSubTab === 'element' && (
             <ElementTab 
                 searchQuery={debouncedSearchQuery}

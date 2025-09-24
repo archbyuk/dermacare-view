@@ -30,16 +30,14 @@ export default function CostsTab() {
             setLoading(true);
             setError(null);
             
-            console.log('🔄 Starting to load costs management data...');
-            
             // 소모품 데이터와 Global 설정 데이터를 병렬로 로드 (개별 실패 허용)
             const results = await Promise.allSettled([
                 getConsumablesList().catch(err => {
-                    console.error('❌ getConsumablesList failed:', err);
+                    console.error('getConsumablesList failed:', err);
                     throw err;
                 }),
                 getGlobalSettings().catch(err => {
-                    console.error('❌ getGlobalSettings failed:', err);
+                    console.error('getGlobalSettings failed:', err);
                     throw err;
                 })
             ]);
@@ -48,34 +46,32 @@ export default function CostsTab() {
             const successCount = results.filter(result => result.status === 'fulfilled').length;
             const failureCount = results.filter(result => result.status === 'rejected').length;
             
-            console.log(`✅ Costs management data loading completed: ${successCount} successful, ${failureCount} failed`);
-            
             // 소모품 데이터 결과 처리
             if (results[0].status === 'fulfilled') {
                 setConsumables(results[0].value);
-                console.log('✅ Consumables loaded successfully');
+                console.log('Consumables loaded successfully');
             } else {
-                console.error('❌ Consumables loading failed:', results[0].reason);
+                console.error('Consumables loading failed:', results[0].reason);
             }
             
             // Global 설정 데이터 결과 처리
             if (results[1].status === 'fulfilled') {
                 setGlobalSettings(results[1].value);
-                console.log('✅ Global settings loaded successfully');
+                console.log('Global settings loaded successfully');
             } else {
-                console.error('❌ Global settings loading failed:', results[1].reason);
+                console.error('Global settings loading failed:', results[1].reason);
             }
             
             // 일부만 성공해도 전체 성공으로 처리
             if (successCount > 0) {
-                console.log('✅ Some costs management data loaded successfully');
+                console.log('Some costs management data loaded successfully');
             } else {
-                console.error('❌ All costs management data failed to load');
+                console.error('All costs management data failed to load');
                 setError('모든 데이터 로드에 실패했습니다.');
             }
             
         } catch (err: unknown) {
-            console.error('❌ loadData failed:', err);
+            console.error('loadData failed:', err);
             if (err instanceof Error) {
                 setError(err.message);
             } else {
@@ -158,7 +154,7 @@ export default function CostsTab() {
                         variant="ghost"
                         size="default"
                         onClick={() => setActiveSubTab(tab.id)}
-                        className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[20vw] max-w-[20vw] ${
+                        className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[80px] max-w-[120px] ${
                             activeSubTab === tab.id 
                                 ? 'bg-gray-50 text-gray-900 font-semibold' 
                                 : 'text-gray-400 font-semibold hover:bg-gray-50 hover:text-gray-800'

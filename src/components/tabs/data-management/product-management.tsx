@@ -191,7 +191,7 @@ export default function ProductManagement() {
                 variant="ghost"
                 size="default"
                 onClick={() => setActiveSubTab(tab.id)}
-                className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[20vw] max-w-[20vw] ${
+                className={`whitespace-nowrap py-1 px-4 transition-all duration-300 min-w-[80px] max-w-[120px] ${
                 activeSubTab === tab.id 
                     ? 'bg-gray-50 text-gray-900 font-semibold' 
                     : 'text-gray-400 font-semibold hover:bg-gray-50 hover:text-gray-800'

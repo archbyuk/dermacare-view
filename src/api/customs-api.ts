@@ -67,9 +67,7 @@ export interface CustomListResponse {
  */
 export const getCustomsList = async (): Promise<CustomListResponse[]> => {
     try {
-        console.log('🔄 [getCustomsList] Starting API call to /customs/');
         const response = await instance.get('/customs/');
-        console.log('✅ [getCustomsList] API call successful, data length:', response.data?.length || 0);
         return response.data;
     } catch (error: unknown) {
         console.error('[getCustomsList] Custom 목록 조회 중 오류:', error);
