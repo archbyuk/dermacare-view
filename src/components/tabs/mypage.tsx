@@ -73,6 +73,7 @@ export function MyPage({ onModalStateChange }: MyPageTabProps) {
                 onModalStateChange?.(true);
             },
             icon: <Settings className="w-5 h-5" />,
+            showOnlyForRole: '관리자' // 관리자만 보이도록
         },
     ];
 
