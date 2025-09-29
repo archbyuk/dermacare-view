@@ -29,6 +29,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
     
     // 로컬 UI 상태
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedPackageType, setSelectedPackageType] = useState('all');
     const [sortBy, setSortBy] = useState('latest');
     const [displayedTreatments, setDisplayedTreatments] = useState<Product[]>([]);
 
@@ -44,6 +45,22 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
         // 카테고리 필터링
         if (selectedCategory !== 'all') {
             filtered = filtered.filter(item => item.Product_Type === selectedCategory);
+        }
+        
+        // 패키지 타입 필터링
+        if (selectedPackageType !== 'all') {
+            filtered = filtered.filter(item => {
+                if (selectedPackageType === '단일시술') {
+                    return item.Package_Type === '단일시술';
+                } else if (selectedPackageType === '패키지') {
+                    return item.Package_Type === '번들';
+                } else if (selectedPackageType === '코스 패키지') {
+                    return item.Package_Type === '시퀀스';
+                } else if (selectedPackageType === '커스텀') {
+                    return item.Package_Type === '커스텀';
+                }
+                return true;
+            });
         }
         
         // 정렬 기준 case 정의
@@ -76,7 +93,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
         }
         
         return filtered;
-    }, [treatments, selectedCategory, sortBy]);
+    }, [treatments, selectedCategory, selectedPackageType, sortBy]);
 
     // 필터링된 데이터를 직접 사용
     useEffect(() => {
@@ -95,6 +112,11 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
         setSelectedCategory(category);
     };
 
+    // 패키지 타입 변경 시
+    const handlePackageTypeChange = (packageType: string) => {
+        setSelectedPackageType(packageType);
+    };
+
     // 정렬 변경 시
     const handleSortChange = (sort: string) => {
         setSortBy(sort);
@@ -111,6 +133,14 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
         { id: 'event', label: '이벤트' }
     ];
 
+    const packageTypes = [
+        { id: 'all', label: '타입 필터' },
+        { id: '단일시술', label: '단일시술' },
+        { id: '패키지', label: '패키지' },
+        { id: '코스 패키지', label: '코스 패키지' },
+        { id: '커스텀', label: '커스텀' }
+    ];
+
     const sortOptions = [
         { id: 'latest', label: '최신순' },
         { id: 'price-asc', label: '가격낮은순' },
@@ -120,43 +150,49 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
 
     return (
         <div className="px-3">
-            {/* 카테고리 탭 */}
-            <div className="flex items-center justify-between mx-4">
-                <div className="flex items-center justify-between w-full gap-5">
-                    <div className="flex gap-1 overflow-x-auto">
-                        {categories.map((category) => (
-                            <Button
-                                key={category.id}
-                                variant="outline"
-                                size="default"
-                                onClick={() => handleCategoryChange(category.id)}
-                                className={`whitespace-nowrap py-0 px-1.5 transition-colors ${
-                                    selectedCategory === category.id 
-                                        ? 'bg-gray-400 text-white hover:bg-gray-200' 
-                                        : 'bg-white text-gray-600 hover:bg-gray-200 hover:text-white border-gray-300 '
-                                }`}
-                            >
-                                {category.label}
-                            </Button>
-                        ))}
-                    </div>
+            {/* 필터 및 정렬 영역 */}
+            <div className="flex items-center justify-center mx-4 gap-2">
+                <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                        <SelectValue placeholder="카테고리" />
+                    </SelectTrigger>
                     
-                    <div className="flex items-center gap-2">
-                        <Select value={sortBy} onValueChange={handleSortChange}>
-                            <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
-                                <SelectValue placeholder="정렬" />
-                            </SelectTrigger>
-                            
-                            <SelectContent className="w-16 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
-                                {sortOptions.map((option) => (
-                                    <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
+                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
+                        {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
+                                {category.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                
+                <Select value={selectedPackageType} onValueChange={handlePackageTypeChange}>
+                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                        <SelectValue placeholder="시술 타입" />
+                    </SelectTrigger>
+                    
+                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
+                        {packageTypes.map((packageType) => (
+                            <SelectItem key={packageType.id} value={packageType.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
+                                {packageType.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                
+                <Select value={sortBy} onValueChange={handleSortChange}>
+                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                        <SelectValue placeholder="정렬" />
+                    </SelectTrigger>
+                    
+                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+                        {sortOptions.map((option) => (
+                            <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             {/* 메인 콘텐츠 영역 */}
@@ -171,7 +207,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
                                 alt="로딩" 
                                 width={32} 
                                 height={32} 
-                                className="animate-spin mx-auto mb-4" 
+                                className="mx-auto mb-4" 
                             />
                             <p className="text-sm text-gray-600">로딩 중입니다</p>
                         </div>
@@ -186,7 +222,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
                                     alt="데이터 없음" 
                                     width={32} 
                                     height={32} 
-                                    className="animate-spin mx-auto mb-4" 
+                                    className="mx-auto mb-4" 
                                 />
                             </div>
                             <h3 className="text-lg font-medium text-gray-900 mb-2">시술 목록이 없습니다</h3>
