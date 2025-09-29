@@ -121,7 +121,7 @@ export function ProductSearch({ onModalStateChange }: SearchTabProps) {
             {/* 로딩 상태 */}
             {(storeLoading) && (
                 <div className="text-center py-8">
-                    <Image src="/logo.svg" alt="로딩" width={32} height={32} className="animate-spin mx-auto mb-4" />
+                    <Image src="/logo.svg" alt="로딩" width={32} height={32} className="mx-auto mb-4" />
                     <p className="text-sm text-gray-600">로딩 중입니다</p>
                 </div>
             )}

@@ -22,7 +22,9 @@ export async function getProducts(params: ProductsQueryParams = {}): Promise<Pro
     });
     
     return response.data;
-  } catch (error: unknown) {
+  } 
+  
+  catch (error: unknown) {
     console.error('시술 목록 조회 에러:', error);
     const errorMessage = error instanceof Error ? error.message : '시술 목록 조회에 실패했습니다.';
     throw new Error(errorMessage);

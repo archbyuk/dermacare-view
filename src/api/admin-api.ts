@@ -16,7 +16,7 @@ export async function uploadSingleExcel(file: File): Promise<{
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await instance.post('/excel/upload-single', formData, {
+    const response = await instance.post('/upload/single', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -58,14 +58,14 @@ export async function uploadMultipleExcel(
           access: 'public',
           allowOverwrite: true, // 기존 파일 덮어쓰기
         });
-        console.log('blob 업로드: ', blob);
+
           
         fileUrls.push({
           url: blob.url,
           name: file.name,
           size: file.size
         });
-        console.log('fileUrls 가져온 게 있는지: ', fileUrls);
+
       } catch (error) {
         console.error(`파일 ${file.name} Blob 업로드 실패:`, error);
         throw new Error(`파일 ${file.name} 업로드 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
@@ -74,10 +74,13 @@ export async function uploadMultipleExcel(
 
     // FormData로 파일 URL들과 clear_tables 옵션 전송
     const formData = new FormData();
-    formData.append('file_urls', JSON.stringify(fileUrls));
-    formData.append('clear_tables', clearTables.toString());
+    formData.append('file_json', JSON.stringify(fileUrls));
+    // formData.append('clear_tables', clearTables.toString());
+    // formData.append('clear', clearTables.toString());
+    console.log('formData', formData);
 
-    const response = await instance.post('/excel/upload-multiple', formData, {
+    // const response = await instance.post('/upload/multiple', formData, {
+    const response = await instance.post('/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -92,21 +95,21 @@ export async function uploadMultipleExcel(
   }
 }
 
-export async function getSupportedFiles(): Promise<{
-  status: string;
-  supported_files: string[];
-  total_count: number;
-  message: string;
-}> {
-  try {
-    const response = await instance.get('/excel/supported-files');
-    return response.data;
-  } catch (error: unknown) {
-    console.error('지원 파일 목록 조회 에러:', error);
-    const errorMessage = error instanceof Error ? error.message : '지원 파일 목록 조회에 실패했습니다.';
-    throw new Error(errorMessage);
-  }
-}
+// export async function getSupportedFiles(): Promise<{
+//   status: string;
+//   supported_files: string[];
+//   total_count: number;
+//   message: string;
+// }> {
+//   try {
+//     const response = await instance.get('/excel/supported-files');
+//     return response.data;
+//   } catch (error: unknown) {
+//     console.error('지원 파일 목록 조회 에러:', error);
+//     const errorMessage = error instanceof Error ? error.message : '지원 파일 목록 조회에 실패했습니다.';
+//     throw new Error(errorMessage);
+//   }
+// }
 
 // 관리자 권한 확인
 export async function checkAdminRole(): Promise<{ isAdmin: boolean; message?: string }> {
