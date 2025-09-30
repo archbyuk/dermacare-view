@@ -1,19 +1,37 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import ModalManager from "@/components/modals/modal-manager";
 import { Toaster } from "react-hot-toast";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+// Pretendard 폰트 로드
+const pretendard = localFont({
+    src: [
+        {
+            path: '../../public/fonts/Pretendard-Regular.woff2',
+            weight: '400',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Pretendard-Medium.woff2',
+            weight: '500',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Pretendard-SemiBold.woff2',
+            weight: '600',
+            style: 'normal',
+        },
+        {
+            path: '../../public/fonts/Pretendard-Bold.woff2',
+            weight: '700',
+            style: 'normal',
+        },
+    ],
+    variable: '--font-pretendard',
+    display: 'swap',
 });
 
 // 메타데이터 설정: manifest, icons, etc
@@ -52,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                 />
             </head>
             
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body className={`${pretendard.variable} antialiased`}>
                 {children}
                 <ServiceWorkerRegistration />
                 <ModalManager />

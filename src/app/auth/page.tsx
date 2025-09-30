@@ -34,7 +34,12 @@ export default function LoginPage() {
             if (result && result.success) {     
                 login(result);  // zustand store에 사용자 정보 저장  
                 
-                router.push('/');
+                // Tauri 환경에서는 window.location.href 사용
+                if (window.__TAURI__) {
+                    window.location.href = '/';
+                } else {
+                    router.push('/');
+                }
             } 
             
             else if (result && !result.success) {

@@ -58,6 +58,39 @@ export interface TreatmentData {
   procedure_names?: string[];
   Product_Description?: string;
   Precautions?: string;
+  element_details?: {
+    Class_Major?: string;
+    Class_Sub?: string;
+    Class_Detail?: string;
+    Class_Type?: string;
+  };
+  bundle_details?: Array<{
+    Element_Info: {
+      Class_Major?: string;
+      Class_Sub?: string;
+      Class_Detail?: string;
+      Class_Type?: string;
+      Name?: string;
+    };
+  }>;
+  custom_details?: Array<{
+    Element_Info: {
+      Class_Major?: string;
+      Class_Sub?: string;
+      Class_Detail?: string;
+      Class_Type?: string;
+      Name?: string;
+    };
+  }>;
+  sequence_details?: Array<{
+    elements: Array<{
+      Class_Major?: string;
+      Class_Sub?: string;
+      Class_Detail?: string;
+      Class_Type?: string;
+      Name?: string;
+    }>;
+  }>;
 }
 
 // 검색 상태 타입
@@ -167,6 +200,140 @@ export const useSearch = (
       
       // 초성 검색 - 주의사항
       if (enableChosungSearch && treatment.Precautions && matchesChosung(searchTerm, treatment.Precautions)) {
+        return true;
+      }
+      
+      // 대분류 검색 (Class_Major)
+      if (treatment.element_details?.Class_Major?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 대분류
+      if (enableChosungSearch && treatment.element_details?.Class_Major && matchesChosung(searchTerm, treatment.element_details.Class_Major)) {
+        return true;
+      }
+      
+      // 중분류 검색 (Class_Sub)
+      if (treatment.element_details?.Class_Sub?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 중분류
+      if (enableChosungSearch && treatment.element_details?.Class_Sub && matchesChosung(searchTerm, treatment.element_details.Class_Sub)) {
+        return true;
+      }
+      
+      // 소분류 검색 (Class_Detail)
+      if (treatment.element_details?.Class_Detail?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 소분류
+      if (enableChosungSearch && treatment.element_details?.Class_Detail && matchesChosung(searchTerm, treatment.element_details.Class_Detail)) {
+        return true;
+      }
+      
+      // 시술 속성 검색 (Class_Type)
+      if (treatment.element_details?.Class_Type?.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // 초성 검색 - 시술 속성
+      if (enableChosungSearch && treatment.element_details?.Class_Type && matchesChosung(searchTerm, treatment.element_details.Class_Type)) {
+        return true;
+      }
+      
+      // 번들 내부 element 검색
+      if (treatment.bundle_details?.some(bundle => {
+        const element = bundle.Element_Info;
+        const found = (
+          element.Class_Major?.toLowerCase().includes(searchTerm) ||
+          element.Class_Sub?.toLowerCase().includes(searchTerm) ||
+          element.Class_Detail?.toLowerCase().includes(searchTerm) ||
+          element.Class_Type?.toLowerCase().includes(searchTerm) ||
+          element.Name?.toLowerCase().includes(searchTerm) ||
+          // 초성 검색
+          (enableChosungSearch && element.Class_Major && matchesChosung(searchTerm, element.Class_Major)) ||
+          (enableChosungSearch && element.Class_Sub && matchesChosung(searchTerm, element.Class_Sub)) ||
+          (enableChosungSearch && element.Class_Detail && matchesChosung(searchTerm, element.Class_Detail)) ||
+          (enableChosungSearch && element.Class_Type && matchesChosung(searchTerm, element.Class_Type)) ||
+          (enableChosungSearch && element.Name && matchesChosung(searchTerm, element.Name))
+        );
+        
+        if (found) {
+          console.log('번들 내부 element 검색 성공:', {
+            productId: treatment.ID,
+            productName: treatment.Product_Name,
+            bundleElement: element,
+            searchTerm
+          });
+        }
+        
+        return found;
+      })) {
+        return true;
+      }
+      
+      // 커스텀 내부 element 검색
+      if (treatment.custom_details?.some(custom => {
+        const element = custom.Element_Info;
+        const found = (
+          element.Class_Major?.toLowerCase().includes(searchTerm) ||
+          element.Class_Sub?.toLowerCase().includes(searchTerm) ||
+          element.Class_Detail?.toLowerCase().includes(searchTerm) ||
+          element.Class_Type?.toLowerCase().includes(searchTerm) ||
+          element.Name?.toLowerCase().includes(searchTerm) ||
+          // 초성 검색
+          (enableChosungSearch && element.Class_Major && matchesChosung(searchTerm, element.Class_Major)) ||
+          (enableChosungSearch && element.Class_Sub && matchesChosung(searchTerm, element.Class_Sub)) ||
+          (enableChosungSearch && element.Class_Detail && matchesChosung(searchTerm, element.Class_Detail)) ||
+          (enableChosungSearch && element.Class_Type && matchesChosung(searchTerm, element.Class_Type)) ||
+          (enableChosungSearch && element.Name && matchesChosung(searchTerm, element.Name))
+        );
+        
+        if (found) {
+          console.log('커스텀 내부 element 검색 성공:', {
+            productId: treatment.ID,
+            productName: treatment.Product_Name,
+            customElement: element,
+            searchTerm
+          });
+        }
+        
+        return found;
+      })) {
+        return true;
+      }
+      
+      // 시퀀스 내부 element 검색
+      if (treatment.sequence_details?.some(sequence => 
+        sequence.elements?.some(element => {
+          const found = (
+            element.Class_Major?.toLowerCase().includes(searchTerm) ||
+            element.Class_Sub?.toLowerCase().includes(searchTerm) ||
+            element.Class_Detail?.toLowerCase().includes(searchTerm) ||
+            element.Class_Type?.toLowerCase().includes(searchTerm) ||
+            element.Name?.toLowerCase().includes(searchTerm) ||
+            // 초성 검색
+            (enableChosungSearch && element.Class_Major && matchesChosung(searchTerm, element.Class_Major)) ||
+            (enableChosungSearch && element.Class_Sub && matchesChosung(searchTerm, element.Class_Sub)) ||
+            (enableChosungSearch && element.Class_Detail && matchesChosung(searchTerm, element.Class_Detail)) ||
+            (enableChosungSearch && element.Class_Type && matchesChosung(searchTerm, element.Class_Type)) ||
+            (enableChosungSearch && element.Name && matchesChosung(searchTerm, element.Name))
+          );
+          
+          if (found) {
+            console.log('시퀀스 내부 element 검색 성공:', {
+              productId: treatment.ID,
+              productName: treatment.Product_Name,
+              sequenceElement: element,
+              searchTerm
+            });
+          }
+          
+          return found;
+        })
+      )) {
         return true;
       }
       
