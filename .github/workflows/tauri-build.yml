@@ -45,7 +45,7 @@ jobs:
               env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                    tagName: 'main'
+                    tagName: 'v0.0.1'
                     releaseName: 'FaceFilter MSO Desktop App'
                     releaseBody: |
                         ## FaceFilter MSO Desktop 앱
