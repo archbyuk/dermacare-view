@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { Upload } from 'lucide-react';
 import { uploadFiles } from '@/api/upload-api';
+import toast from 'react-hot-toast';
 
 // 지원되는 Excel 파일 목록 (정적 데이터)
 const SUPPORTED_FILES = [
@@ -27,7 +28,6 @@ const SUPPORTED_FILES = [
 
 export function ExcelUpload() {
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     
     const multipleFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,21 +38,35 @@ export function ExcelUpload() {
         if (files.length === 0) return;
 
         setIsLoading(true);
-        setMessage(null);
 
         try {
             const result = await uploadFiles(files);
             
-            // 성공/실패 파일 수와 에러 정보를 포함한 메시지 구성
-            let messageText = result.message;
+            // results 배열에서 실패한 파일들 찾기
+            const failedFiles = result.results.filter(file => !file.success);
+            const successfulFiles = result.results.filter(file => file.success);
             
-            if (result.errors && result.errors.length > 0) {
-                const errorDetails = result.errors.map(error => `${error.filename}: ${error.error}`).join('\n');
-                messageText += `\n\n에러 상세:\n${errorDetails}`;
+            if (failedFiles.length > 0) {
+                // 에러가 있는 경우
+                let errorText = `[ 업로드 실패 ]: ${failedFiles.length}개 파일에서 오류 발생`;
+                
+                failedFiles.forEach((file, _index) => {
+                    if (file.errors && Array.isArray(file.errors) && file.errors.length > 0) {
+                        file.errors.forEach((error: string) => {
+                            errorText += `\n\n    ${error}`;
+                        });
+                    }
+                });
+                
+                if (successfulFiles.length > 0) {
+                    errorText += `\n\n성공: ${successfulFiles.length}개 파일 업로드 완료`;
+                }
+                
+                toast.error(errorText);
+            } else {
+                // 모든 파일이 성공한 경우
+                toast.success(`모든 파일 업로드가 성공적으로 처리되었습니다.\n\n총 ${result.total_files}개 파일 업로드 완료`);
             }
-            
-            const messageType = result.errors && result.errors.length > 0 ? 'error' : 'success';
-            setMessage({ type: messageType, text: messageText });
             
             // 파일 입력 초기화
             if (multipleFileInputRef.current) {
@@ -61,7 +75,7 @@ export function ExcelUpload() {
         } catch (error: unknown) {
             console.error('파일 업로드 에러:', error);
             const errorMessage = error instanceof Error ? error.message : '파일 업로드에 실패했습니다.';
-            setMessage({ type: 'error', text: errorMessage });
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -74,25 +88,6 @@ export function ExcelUpload() {
     return (
         <div className="px-7 mt-6">
             <div className="w-full max-w-md mx-auto relative">
-                {/* 메시지 표시 - 오버레이 형태 */}
-                {message && (
-                    <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg text-sm shadow-lg max-w-sm ${
-                        message.type === 'success' 
-                            ? 'bg-green-50 border border-green-200 text-green-700' 
-                            : 'bg-red-50 border border-red-200 text-red-700'
-                    }`}>
-                        <div className="flex items-center justify-between">
-                            <span>{message.text}</span>
-                            <button 
-                                onClick={() => setMessage(null)}
-                                className="ml-3 text-xl text-gray-400 hover:text-gray-600"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    </div>
-                )}
-
                 {/* 메인 콘텐츠 */}
                 <div className="bg-white rounded-lg shadow-none">
                     
