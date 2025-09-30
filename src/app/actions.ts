@@ -22,7 +22,7 @@ export async function loginAction(formData: FormData) {
         if (response.data.success) {
             const cookieStore = await cookies();
             
-            // access_token 쿠키 설정 - 기기별 최적화
+            // access_token 쿠키 설정 - URL 기반 최적화
             cookieStore.set('access_token', response.data.access_token!, {
                 httpOnly: false,
                 secure: true,

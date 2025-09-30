@@ -1,10 +1,47 @@
 @import "tailwindcss";
 
+/* Pretendard 폰트는 Next.js localFont로 로드됨 */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pretendard: var(--font-pretendard);
+}
+
+/* 브라우저별 폰트 렌더링 통일 - Pretendard 우선 */
+* {
+  font-family: var(--font-pretendard), var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+}
+
+/* Safari 특화 폰트 설정 */
+@supports (-webkit-appearance: none) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke: 0.01em transparent;
+  }
+}
+
+/* Chrome 특화 폰트 설정 */
+@supports (backdrop-filter: blur(1px)) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Firefox 특화 폰트 설정 */
+@-moz-document url-prefix() {
+  * {
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,21 +52,17 @@
 }
 
 html, body {
-  height: 100%;
-  overflow: auto;
-  background: transparent;
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", sans-serif;
+  font-kerning: normal;
   /* 모바일 앱 최적화 */
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
+  -webkit-font-smoothing: antialiased; /* Safari용 */
+  -moz-osx-font-smoothing: grayscale;  /* macOS Firefox용 */
+  text-rendering: optimizeLegibility;   /* 가독성 개선 */
+  font-feature-settings: "kern";        /* 커닝 활성화 */
 }
 
 .app-container {
