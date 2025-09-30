@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import ModalManager from "@/components/modals/modal-manager";
+import { Toaster } from "react-hot-toast";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -54,6 +56,40 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                 {children}
                 <ServiceWorkerRegistration />
                 <ModalManager />
+                <Toaster 
+                    position="top-center"
+                    toastOptions={{
+                        duration: 4000,
+                        style: {
+                            background: '#363636',
+                            color: '#fff',
+                            fontSize: '14px',
+                            padding: '12px 16px',
+                        },
+                        success: {
+                            duration: 4000,
+                            icon: <CheckCircle className="w-5 h-5" />,
+                            style: {
+                                background: '#22c55e',
+                                color: '#fff',
+                                fontSize: '14px',
+                                padding: '12px 16px',
+                                fontWeight: '600',
+                            },
+                        },
+                        error: {
+                            duration: 8000,
+                            icon: <AlertCircle className="w-8 h-8" />,
+                            style: {
+                                background: '#ef4444',
+                                color: '#fff',
+                                fontSize: '13px',
+                                padding: '12px 16px',
+                                fontWeight: '600',
+                            },
+                        },
+                    }}
+                />
             </body>
 
         </html>
