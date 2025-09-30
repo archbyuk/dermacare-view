@@ -137,7 +137,7 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
         { id: 'all', label: '타입 필터' },
         { id: '단일시술', label: '단일시술' },
         { id: '패키지', label: '패키지' },
-        { id: '코스 패키지', label: '코스 패키지' },
+        { id: '코스 패키지', label: '코스패키지' },
         { id: '커스텀', label: '커스텀' }
     ];
 
@@ -153,11 +153,11 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
             {/* 필터 및 정렬 영역 */}
             <div className="flex items-center justify-center mx-4 gap-2">
                 <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                    <SelectTrigger className="w-26 min-w-26 max-w-26 bg-white text-gray-600 border-gray-300">
                         <SelectValue placeholder="카테고리" />
                     </SelectTrigger>
                     
-                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
+                    <SelectContent className="w-26 min-w-26 max-w-26 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
                         {categories.map((category) => (
                             <SelectItem key={category.id} value={category.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
                                 {category.label}
@@ -167,11 +167,11 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
                 </Select>
                 
                 <Select value={selectedPackageType} onValueChange={handlePackageTypeChange}>
-                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                    <SelectTrigger className="w-26 min-w-26 max-w-26 bg-white text-gray-600 border-gray-300">
                         <SelectValue placeholder="시술 타입" />
                     </SelectTrigger>
                     
-                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
+                    <SelectContent className="w-26 min-w-26 max-w-26 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="start">
                         {packageTypes.map((packageType) => (
                             <SelectItem key={packageType.id} value={packageType.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
                                 {packageType.label}
@@ -181,11 +181,11 @@ export function ProductList({ onModalStateChange }: ProductListTabProps) {
                 </Select>
                 
                 <Select value={sortBy} onValueChange={handleSortChange}>
-                    <SelectTrigger className="w-28 bg-white text-gray-600 border-gray-300">
+                    <SelectTrigger className="w-26 min-w-26 max-w-26 bg-white text-gray-600 border-gray-300">
                         <SelectValue placeholder="정렬" />
                     </SelectTrigger>
                     
-                    <SelectContent className="w-28 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
+                    <SelectContent className="w-26 min-w-26 max-w-26 z-10 bg-white border-gray-300 text-gray-500 shadow-lg" position="popper" side="bottom" align="end">
                         {sortOptions.map((option) => (
                             <SelectItem key={option.id} value={option.id} className="text-gray-500 hover:bg-white border-gray-300 text-xs">
                                 {option.label}

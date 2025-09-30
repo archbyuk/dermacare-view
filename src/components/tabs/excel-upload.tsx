@@ -98,7 +98,6 @@ export function ExcelUpload() {
                     
                     {/* 파일 업로드 영역 */}
                     <div className="mb-8">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">파일 업로드</h3>
                         
                         {/* 드래그 앤 드롭 영역 */}
                         <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
@@ -157,7 +156,7 @@ export function ExcelUpload() {
                             지원되는 파일 목록 ({SUPPORTED_FILES.length}개)
                         </h3>
                         
-                        <div className="rounded-lg overflow-y-auto overscroll-contain" style={{ maxHeight: 'calc(100vh - 550px)' }}>
+                        <div className="rounded-lg overflow-y-auto overscroll-contain" style={{ maxHeight: 'calc(100vh - 480px)' }}>
                             <div className="space-y-3">
                                 {SUPPORTED_FILES.map((filename, index) => (
                                     <div key={index} className="bg-white rounded-lg p-3 border border-gray-200 hover:shadow-sm transition-shadow">
