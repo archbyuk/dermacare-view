@@ -3,10 +3,7 @@ name: Tauri Build & Release
 
 # 워크플로우 트리거
 on:
-    # v1.0.0, v0.9.2 등 버전 태그 푸시 시 자동 실행
-    push:
-        tags:
-            - 'v*'
+    # 수동 실행만 가능
     workflow_dispatch:
 
 # 워크 플로우 작업        
@@ -48,8 +45,8 @@ jobs:
               env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                    tagName: ${{ github.ref_name }}
-                    releaseName: 'FaceFilter MSO ${{ github.ref_name }}'
+                    tagName: 'main'
+                    releaseName: 'FaceFilter MSO Desktop App'
                     releaseBody: |
                         ## FaceFilter MSO Desktop 앱
                       
