@@ -184,10 +184,10 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
         // 타입 가드로 ProductGroupedResponse[] 확인
         if (Array.isArray(response.data) && response.data.length > 0 && 'procedure_info' in response.data[0]) {
           const products = response.data as ProductGroupedResponse[];
-          console.log(`📊 Standard 상품 데이터 로드 완료: 총 ${products.length}개`);
+          console.log(`Standard 상품 데이터 로드 완료: 총 ${products.length}개`);
           setStandardProducts(products);
         } else {
-          console.log('📊 Standard 상품 데이터 없음: 0개');
+          console.log('Standard 상품 데이터 없음: 0개');
           setStandardProducts([]);
         }
       }
@@ -216,10 +216,10 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
         // 타입 가드로 ProductGroupedResponse[] 확인
         if (Array.isArray(response.data) && response.data.length > 0 && 'procedure_info' in response.data[0]) {
           const products = response.data as ProductGroupedResponse[];
-          console.log(`📊 Event 상품 데이터 로드 완료: 총 ${products.length}개`);
+          console.log(`Event 상품 데이터 로드 완료: 총 ${products.length}개`);
           setEventProducts(products);
         } else {
-          console.log('📊 Event 상품 데이터 없음: 0개');
+          console.log('Event 상품 데이터 없음: 0개');
           setEventProducts([]);
         }
       }
