@@ -63,7 +63,12 @@ export async function middleware(request: NextRequest) {
     
     // 이미 인증된 사용자가 로그인 페이지에 접근하는 경우
     if (isAuthPath && isAuthenticated) {
-        return NextResponse.redirect(new URL('/', request.url))
+        // 타우리 환경에서는 더 강력한 리다이렉트 처리
+        const response = NextResponse.redirect(new URL('/', request.url))
+        response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+        response.headers.set('Pragma', 'no-cache')
+        response.headers.set('Expires', '0')
+        return response
     }
     
     return NextResponse.next()

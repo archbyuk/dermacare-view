@@ -28,22 +28,27 @@ export async function refreshTokenAction(): Promise<RefreshTokenResponse> {
         
         if (response.data.success) {
             
+            // 환경에 따른 secure 옵션 설정
+            const isProduction = process.env.NODE_ENV === 'production';
+            
             // 새로운 토큰으로 쿠키 업데이트 (access_token)
             cookieStore.set('access_token', response.data.access_token!, {
-                httpOnly: true,
-                secure: true,
+                httpOnly: false,
+                secure: isProduction, // 프로덕션에서만 secure: true
                 sameSite: 'lax',
-                maxAge: 3600 // 1시간
+                maxAge: 3600, // 1시간
+                path: '/'
             });
             
             // 새로운 토큰으로 쿠키 업데이트 (refresh_token: autoLogin에 따라 조건부 설정)
             if (response.data.refresh_token && autoLogin) {
                 
                 cookieStore.set('refresh_token', response.data.refresh_token, {
-                    httpOnly: true,
-                    secure: true,
+                    httpOnly: false,
+                    secure: isProduction, // 프로덕션에서만 secure: true
                     sameSite: 'lax',
-                    maxAge: 7 * 24 * 3600 // 7일
+                    maxAge: 7 * 24 * 3600, // 7일
+                    path: '/'
                 });
             }
             

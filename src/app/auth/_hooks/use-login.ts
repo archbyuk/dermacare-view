@@ -25,7 +25,13 @@ export function useLogin() {
             if (result && result.success) {
                 login(result);                   // useAuthStore의 login 함수 호출: 사용자 로그인 정보 저장
                 
-                router.push('/');
+                if (window.__TAURI__) {
+                    window.location.href = '/';
+                } 
+                
+                else {
+                    router.push('/');
+                }
             }
             
             else {

@@ -20,8 +20,9 @@ declare global {
 }
 
 export function ServiceWorkerRegistration() {
-    
+
     useEffect(() => {
+        
         // Tauri 환경에서는 Service Worker 비활성화
         if (window.__TAURI__) {
             console.log('Running in Tauri, Service Worker disabled');

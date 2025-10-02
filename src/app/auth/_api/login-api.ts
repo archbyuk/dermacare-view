@@ -21,10 +21,13 @@ export async function loginAction(formData: FormData): Promise<LoginResponse> {
         if (response.data.success) {
             const cookieStore = await cookies();
             
-            // access_token 쿠키 설정 - URL 기반 최적화
+            // 환경에 따른 secure 옵션 설정
+            const isProduction = process.env.NODE_ENV === 'production';
+            
+            // access_token 쿠키 설정 - 환경별 최적화
             cookieStore.set('access_token', response.data.access_token!, {
                 httpOnly: false,
-                secure: true,
+                secure: isProduction, // 프로덕션에서만 secure: true
                 sameSite: 'lax',
                 maxAge: 3600, // 1시간 
                 path: '/'
@@ -35,7 +38,7 @@ export async function loginAction(formData: FormData): Promise<LoginResponse> {
                 // 로그인 정보 저장 선택 시에만 refresh_token 제공
                 cookieStore.set('refresh_token', response.data.refresh_token, {
                     httpOnly: false,
-                    secure: true,
+                    secure: isProduction, // 프로덕션에서만 secure: true
                     sameSite: 'lax',
                     maxAge: 7 * 24 * 3600, // 7일
                     path: '/'
