@@ -96,7 +96,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                             },
                         },
                         error: {
-                            duration: 8000,
+                            duration: 4000,
                             icon: <AlertCircle className="w-8 h-8" />,
                             style: {
                                 background: '#ef4444',

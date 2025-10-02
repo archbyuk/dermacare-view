@@ -18,7 +18,6 @@ export interface Product {
   class_types: string[];
   class_type_count: number;
   Precautions?: string;
-  // 새로운 API 응답 구조에 맞는 필드들
   bundle_details?: BundleDetail[];
   custom_details?: CustomDetail[];
   sequence_details?: SequenceDetail[];

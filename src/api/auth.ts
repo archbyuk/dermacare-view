@@ -1,24 +1,22 @@
 'use server'
 
 import { cookies } from 'next/headers';
-import { instance } from '@/api/axios-instance';
+import { instance } from './axios-instance';
 
 // 로그인 함수
 export async function loginAction(formData: FormData) {
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
-    const rememberMe = formData.get('rememberMe') === 'true';
+    const autoLogin = formData.get('autoLogin') === 'true';
     
     try {
-        console.log('로그인 시도:', { username, rememberMe });
         
         const response = await instance.post('/auth/login', {
             username,
             password
         });
         
-        console.log('백엔드 응답:', response.data);
-        
+        // 응답 데이터가 성공인 경우
         if (response.data.success) {
             const cookieStore = await cookies();
             
@@ -31,8 +29,10 @@ export async function loginAction(formData: FormData) {
                 path: '/'
             });
             
-            // refresh_token 쿠키 설정 - rememberMe에 따라 조건부 설정
-            if (response.data.refresh_token && rememberMe) {
+
+            // refresh_token 쿠키 설정 - autoLogin에 따라 조건부 설정
+            if (response.data.refresh_token && autoLogin) {
+                
                 // 로그인 정보 저장 선택 시에만 refresh_token 제공
                 cookieStore.set('refresh_token', response.data.refresh_token, {
                     httpOnly: false,
@@ -53,9 +53,11 @@ export async function loginAction(formData: FormData) {
                 username: response.data.username
             };
             
-        } 
+        }
         
         else {
+            
+            // 실패 시 에러 객체 반환 (throw 대신)
             return {
                 success: false,
                 error: response.data.message || '로그인에 실패했습니다.'
@@ -65,22 +67,23 @@ export async function loginAction(formData: FormData) {
     
     catch (error: unknown) {
         console.error('로그인 에러:', error);
-        const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
         
-        // 에러 시에도 일관된 형식으로 반환
+        // 에러 객체 반환 (throw 대신)
         return {
             success: false,
-            error: errorMessage
+            error: error instanceof Error ? error.message : '로그인에 실패했습니다.'
         };
     }
 }
 
 // 리프레시 토큰 갱신 함수
 export async function refreshTokenAction() {
+    
     try {
+        
         const cookieStore = await cookies();
         const refreshToken = cookieStore.get('refresh_token')?.value;
-        const rememberMe = cookieStore.get('remember_me')?.value;
+        const autoLogin = cookieStore.get('autoLogin')?.value;
         
         if (!refreshToken) {
             throw new Error('리프레시 토큰이 없습니다.');
@@ -91,6 +94,7 @@ export async function refreshTokenAction() {
         });
         
         if (response.data.success) {
+            
             // 새로운 토큰으로 쿠키 업데이트
             cookieStore.set('access_token', response.data.access_token!, {
                 httpOnly: true,
@@ -100,8 +104,9 @@ export async function refreshTokenAction() {
             });
             
             if (response.data.refresh_token) {
-                // remember_me 쿠키 상태에 따라 refresh_token 설정
-                if (rememberMe === 'true') {
+                
+                // autoLogin 쿠키 상태에 따라 refresh_token 설정
+                if (autoLogin === 'true') {
                     // 로그인 정보 저장이 선택된 경우에만 refresh_token 제공
                     cookieStore.set('refresh_token', response.data.refresh_token, {
                         httpOnly: true,
@@ -110,7 +115,7 @@ export async function refreshTokenAction() {
                         maxAge: 7 * 24 * 3600 // 7일
                     });
                 }
-                // rememberMe가 false면 refresh_token 설정 안함
+                // autoLogin이 false면 refresh_token 설정 안함
             }
             
             // 토큰 정보도 함께 반환
@@ -140,6 +145,7 @@ export async function refreshTokenAction() {
 
 // 로그아웃 함수
 export async function logoutAction() {
+    
     try {
         const cookieStore = await cookies();
         const refreshToken = cookieStore.get('refresh_token')?.value;
@@ -163,7 +169,10 @@ export async function logoutAction() {
         // 에러가 발생해도 쿠키는 삭제
         await clearAuthCookies();
         
-        return { success: false, error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' };
+        return { 
+            success: false, 
+            error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' 
+        };
     }
 }
 

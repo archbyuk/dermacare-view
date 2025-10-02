@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LogOut, User, Settings, FileUp, X, ChevronRight } from 'lucide-react';
-import { logoutAction } from '@/app/actions';
-import { useAuthStore } from '@/store/auth-store';
+import { logoutAction } from '@/app/auth/_api/logout-api';
 import { ExcelUpload } from '@/components/tabs/excel-upload';
 import Image from 'next/image';
 import DataManagement from './data-management';
+import { useAuthStore } from '@/app/auth/_store/auth-store';
 
 interface MyPageTabProps {
     onModalStateChange?: (isOpen: boolean) => void;

@@ -1,6 +1,6 @@
 'use server'
 
-import { instance } from '@/api/axios-instance';
+import { instance } from './axios-instance';
 import { 
   ProductsResponse, 
   ProductDetailResponse, 
