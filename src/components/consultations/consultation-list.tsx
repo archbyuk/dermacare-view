@@ -27,7 +27,7 @@ export default function ConsultationList() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     // 초기 데이터 로드
-    const loadInitialData = useCallback(async () => {
+    const loadInitialData = async () => {
         setIsLoading(true);
         setError(null);
         try {
@@ -46,10 +46,10 @@ export default function ConsultationList() {
         } finally {
             setIsLoading(false);
         }
-    }, [sortBy, sortOrder]);
+    };
 
     // 추가 데이터 로드
-    const loadMoreData = useCallback(async () => {
+    const loadMoreData = async () => {
         if (!nextCursor || isLoadingMore) return;
         
         setIsLoadingMore(true);
@@ -68,7 +68,7 @@ export default function ConsultationList() {
         } finally {
             setIsLoadingMore(false);
         }
-    }, [nextCursor, isLoadingMore, sortBy, sortOrder]);
+    };
 
     // 새로고침 함수
     const handleRefresh = () => {
@@ -105,7 +105,8 @@ export default function ConsultationList() {
     // 초기 데이터 로드
     useEffect(() => {
         loadInitialData();
-    }, [loadInitialData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sortBy, sortOrder]);
 
 
     const formatDate = (dateString: string) => {
