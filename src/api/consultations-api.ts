@@ -1,5 +1,6 @@
 'use server'
 
+import { AxiosError } from 'axios';
 import { instance } from './axios-instance';
 import { 
     ConsultationListResponse, 
@@ -24,7 +25,23 @@ export async function getConsultations(params: ConsultationQueryParams = {}): Pr
         
         return response.data;
     } catch (error: unknown) {
-        console.error('상담 목록 조회 에러:', error);
+        if (error instanceof AxiosError) {
+            console.error('상담 목록 조회 에러 (AxiosError):', {
+                message: error.message,
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+                config: {
+                    url: error.config?.url,
+                    method: error.config?.method,
+                    params: error.config?.params,
+                }
+            });
+            const errorMessage = error.response?.data?.detail || error.message || '상담 목록 조회에 실패했습니다.';
+            throw new Error(errorMessage);
+        }
+        
+        console.error('상담 목록 조회 에러 (Unknown):', error);
         const errorMessage = error instanceof Error ? error.message : '상담 목록 조회에 실패했습니다.';
         throw new Error(errorMessage);
     }
@@ -36,7 +53,21 @@ export async function createConsultation(data: ConsultationCreateRequest): Promi
         const response = await instance.post('/consultations/create', data);
         return response.data;
     } catch (error: unknown) {
-        console.error('상담 생성 에러:', error);
+        if (error instanceof AxiosError) {
+            console.error('상담 생성 에러 (AxiosError):', {
+                message: error.message,
+                status: error.response?.status,
+                data: error.response?.data,
+                config: {
+                    url: error.config?.url,
+                    method: error.config?.method,
+                }
+            });
+            const errorMessage = error.response?.data?.detail || error.message || '상담 생성에 실패했습니다.';
+            throw new Error(errorMessage);
+        }
+        
+        console.error('상담 생성 에러 (Unknown):', error);
         const errorMessage = error instanceof Error ? error.message : '상담 생성에 실패했습니다.';
         throw new Error(errorMessage);
     }
