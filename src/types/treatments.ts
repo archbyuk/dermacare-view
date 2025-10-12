@@ -1,6 +1,7 @@
 // 치료 목록 조회 관련 타입 정의
 
 export interface Product {
+  elements?: never[];
   ID: number;
   Product_Type: 'standard' | 'event';
   Package_Type: string;
@@ -18,7 +19,6 @@ export interface Product {
   class_types: string[];
   class_type_count: number;
   Precautions?: string;
-  // 새로운 API 응답 구조에 맞는 필드들
   bundle_details?: BundleDetail[];
   custom_details?: CustomDetail[];
   sequence_details?: SequenceDetail[];

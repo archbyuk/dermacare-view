@@ -59,7 +59,7 @@ export function ProductSearch({ onModalStateChange }: SearchTabProps) {
     };
 
     return (
-        <div className="pb-20 px-7 slide-in-right">
+        <div className="pb-20 px-7 pt-3 slide-in-right">
             {/* 검색 입력 */}
             <div className="mb-6">
                 <div className="relative">

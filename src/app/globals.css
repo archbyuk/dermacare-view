@@ -1,14 +1,6 @@
 @import "tailwindcss";
 
-/* Pretendard 폰트는 Next.js localFont로 로드됨 */
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-pretendard: var(--font-pretendard);
-}
+@layer theme, base, components, utilities;
 
 /* 브라우저별 폰트 렌더링 통일 - Pretendard 우선 */
 * {

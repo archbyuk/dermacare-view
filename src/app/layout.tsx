@@ -66,7 +66,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
             <head>
                 <meta 
                     name="viewport" 
-                    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no upgrade-insecure-requests" 
+                    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" 
                 />
             </head>
             
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                 {children}
                 <ServiceWorkerRegistration />
                 <ModalManager />
-                <Toaster 
+                <Toaster
                     position="top-center"
                     toastOptions={{
                         duration: 4000,
@@ -96,7 +96,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                             },
                         },
                         error: {
-                            duration: 8000,
+                            duration: 4000,
                             icon: <AlertCircle className="w-8 h-8" />,
                             style: {
                                 background: '#ef4444',

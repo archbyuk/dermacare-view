@@ -156,8 +156,3 @@ export const TAXABLE_TYPE_OPTIONS = [
   { value: '과세', label: '과세' },
   { value: '비과세', label: '비과세' },
 ] as const;
-
-
-// ======================== 탭 관련 옵션 ======================== //
-
-// 탭 이름 정의 추가 예정
