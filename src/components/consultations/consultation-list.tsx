@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { getConsultations } from '@/api/consultations-api';
 import { ConsultationListResponse, ConsultationReadResponse } from '@/types/consultations';
 import ConsultationDetailModal from './consultation-detail-modal';
@@ -10,7 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RefreshCw, AlertTriangle, Calendar, User, CreditCard, ArrowUpDown } from 'lucide-react';
 import Image from 'next/image';
 
-export default function ConsultationList() {
+export interface ConsultationListRef {
+    refresh: () => Promise<void>;
+}
+
+const ConsultationList = forwardRef<ConsultationListRef>((props, ref) => {
     const [consultations, setConsultations] = useState<ConsultationReadResponse[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -47,6 +51,13 @@ export default function ConsultationList() {
             setIsLoading(false);
         }
     };
+
+    // ref를 통해 부모 컴포넌트에서 새로고침 가능하도록 노출
+    useImperativeHandle(ref, () => ({
+        refresh: async () => {
+            await loadInitialData();
+        }
+    }));
 
     // 추가 데이터 로드
     const loadMoreData = async () => {
@@ -343,4 +354,8 @@ export default function ConsultationList() {
             />
         </div>
     );
-}
+});
+
+ConsultationList.displayName = 'ConsultationList';
+
+export default ConsultationList;

@@ -624,7 +624,7 @@ export default function ConsultationCreateModal({
                                     <SelectTrigger className={errors.inflow_path ? 'border-red-500' : ''}>
                                         <SelectValue placeholder="유입경로를 선택하세요" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className='bg-white'>
                                         <SelectItem value="판촉물">판촉물</SelectItem>
                                         <SelectItem value="워크인">워크인</SelectItem>
                                         <SelectItem value="지인 소개">지인 소개</SelectItem>
@@ -648,7 +648,7 @@ export default function ConsultationCreateModal({
                                     <SelectTrigger className={errors.consultation_type ? 'border-red-500' : ''}>
                                         <SelectValue placeholder="상담유형을 선택하세요" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className='bg-white'>
                                         <SelectItem value="신환상담">신환상담</SelectItem>
                                         <SelectItem value="경과상담">경과상담</SelectItem>
                                         <SelectItem value="종료 상담">종료 상담</SelectItem>
@@ -668,7 +668,7 @@ export default function ConsultationCreateModal({
                                     <SelectTrigger className={errors.concern_type ? 'border-red-500' : ''}>
                                         <SelectValue placeholder="고민유형을 선택하세요" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className='bg-white'>
                                         <SelectItem value="필러">필러</SelectItem>
                                         <SelectItem value="제모">제모</SelectItem>
                                         <SelectItem value="결혼">결혼</SelectItem>
@@ -947,7 +947,7 @@ export default function ConsultationCreateModal({
                                     <SelectTrigger>
                                         <SelectValue placeholder="결제타입을 선택하세요" />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className='bg-white'>
                                         <SelectItem value="현금">현금</SelectItem>
                                         <SelectItem value="카드">카드</SelectItem>
                                         <SelectItem value="계좌이체">계좌이체</SelectItem>

@@ -1,16 +1,22 @@
 'use client'
 
-import { useState } from 'react';
-import ConsultationList from '@/components/consultations/consultation-list';
+import { useState, useRef } from 'react';
+import ConsultationList, { ConsultationListRef } from '@/components/consultations/consultation-list';
 import ConsultationCreateModal, { ConsultationFormData } from '@/components/consultations/consultation-create-modal';
 
 export default function ConsultationsPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const consultationListRef = useRef<ConsultationListRef>(null);
 
-    const handleCreateConsultation = (data: ConsultationFormData) => {
+    const handleCreateConsultation = async (data: ConsultationFormData) => {
         console.log('새 상담 등록:', data);
         // TODO: API 호출로 상담 등록
         alert('상담이 등록되었습니다!');
+        
+        // 상담 목록 새로고침
+        if (consultationListRef.current) {
+            await consultationListRef.current.refresh();
+        }
     };
 
     return (
@@ -26,7 +32,7 @@ export default function ConsultationsPage() {
             </div>
             
             {/* 상담 목록 */}
-            <ConsultationList />
+            <ConsultationList ref={consultationListRef} />
             
             {/* 새 상담 등록 모달 */}
             <ConsultationCreateModal
