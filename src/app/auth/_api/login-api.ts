@@ -11,6 +11,7 @@ export async function loginAction(formData: FormData): Promise<LoginResponse> {
     const autoLogin = formData.get('autoLogin') === 'true';
     
     try {
+        
         // 로그인 요청
         const response = await instance.post('/auth/login', {
             username: username,

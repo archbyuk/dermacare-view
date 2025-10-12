@@ -24,14 +24,24 @@ export function useLogin() {
             
             if (result && result.success) {
                 login(result);                   // useAuthStore의 login 함수 호출: 사용자 로그인 정보 저장
-                
-                if (window.__TAURI__) {
-                    window.location.href = '/';
-                } 
-                
-                else {
+
+                // 타우리 환경 감지 (여러 방법 시도)
+                const isTauri = 
+                    (typeof window !== 'undefined' && '__TAURI__' in window) ||
+                    (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) ||
+                    (typeof window !== 'undefined' && window.navigator.userAgent.includes('Tauri'));
+
+                if (isTauri) {
+                    // 타우리 환경(데스크톱 앱)에서는 /mso로 이동
+                    router.push('/mso');
+                } else {
+                    // 웹 환경에서는 역할 상관없이 /로 이동
                     router.push('/');
                 }
+
+                toast.success(
+                    result?.message || '로그인에 성공했습니다.'
+                );
             }
             
             else {
@@ -52,4 +62,3 @@ export function useLogin() {
 
     return { handleLogin };
 }
-

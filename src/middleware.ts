@@ -28,13 +28,16 @@ export async function middleware(request: NextRequest) {
                 isAuthenticated = true
           
                 if (isAuthPath) {
-                    // /auth 페이지에서 토큰 갱신 성공 시 홈으로 리다이렉트
-                    return NextResponse.redirect(new URL('/', request.url))
+                    // /auth 페이지에서 토큰 갱신 성공 시 환경에 따라 리다이렉트
+                    const userAgent = request.headers.get('user-agent') || ''
+                    const isTauri = userAgent.includes('Tauri')
+                    const redirectUrl = isTauri ? '/mso' : '/'
+                    return NextResponse.redirect(new URL(redirectUrl, request.url))
                 }
                 // 보호된 경로에서는 계속 진행
             }
         
-        } 
+        }
       
         catch (error: unknown) {
             console.error('Token refresh failed:', error)
@@ -63,8 +66,12 @@ export async function middleware(request: NextRequest) {
     
     // 이미 인증된 사용자가 로그인 페이지에 접근하는 경우
     if (isAuthPath && isAuthenticated) {
-        // 타우리 환경에서는 더 강력한 리다이렉트 처리
-        const response = NextResponse.redirect(new URL('/', request.url))
+        // 타우리 환경 감지
+        const userAgent = request.headers.get('user-agent') || ''
+        const isTauri = userAgent.includes('Tauri')
+        const redirectUrl = isTauri ? '/mso' : '/'
+        
+        const response = NextResponse.redirect(new URL(redirectUrl, request.url))
         response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
         response.headers.set('Pragma', 'no-cache')
         response.headers.set('Expires', '0')

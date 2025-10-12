@@ -1,6 +1,7 @@
 // 치료 목록 조회 관련 타입 정의
 
 export interface Product {
+  elements?: never[];
   ID: number;
   Product_Type: 'standard' | 'event';
   Package_Type: string;

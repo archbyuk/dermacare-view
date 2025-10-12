@@ -74,7 +74,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                 {children}
                 <ServiceWorkerRegistration />
                 <ModalManager />
-                <Toaster 
+                <Toaster
                     position="top-center"
                     toastOptions={{
                         duration: 4000,
