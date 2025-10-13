@@ -42,30 +42,40 @@ export function ExcelUpload() {
         try {
             const result = await uploadFiles(files);
             
-            // results 배열에서 실패한 파일들 찾기
-            const failedFiles = result.results.filter(file => !file.success);
+            // result.errors 배열과 results 배열에서 실패한 파일들 찾기
+            const hasErrors = result.errors && result.errors.length > 0;
+            const failedResultFiles = result.results.filter(file => !file.success);
             const successfulFiles = result.results.filter(file => file.success);
             
-            if (failedFiles.length > 0) {
+            if (hasErrors || failedResultFiles.length > 0) {
                 // 에러가 있는 경우
-                let errorText = `[ 업로드 실패 ]: ${failedFiles.length}개 파일에서 오류 발생`;
+                const totalFailedCount = (result.errors?.length || 0) + failedResultFiles.length;
+                let errorText = `업로드 실패: ${totalFailedCount}개 파일에서 오류 발생\n`;
                 
-                failedFiles.forEach((file, _index) => {
+                // result.errors 배열의 에러 메시지 추가
+                if (hasErrors) {
+                    result.errors.forEach((error) => {
+                        errorText += `\n${error.filename}: ${error.error}`;
+                    });
+                }
+                
+                // results 배열에서 실패한 파일의 에러 메시지 추가
+                failedResultFiles.forEach((file) => {
                     if (file.errors && Array.isArray(file.errors) && file.errors.length > 0) {
                         file.errors.forEach((error: string) => {
-                            errorText += `\n\n    ${error}`;
+                            errorText += `\n${file.filename}: ${error}`;
                         });
                     }
                 });
                 
                 if (successfulFiles.length > 0) {
-                    errorText += `\n\n성공: ${successfulFiles.length}개 파일 업로드 완료`;
+                    errorText += `\n\n✅ 성공: ${successfulFiles.length}개 파일`;
                 }
                 
                 toast.error(errorText);
             } else {
                 // 모든 파일이 성공한 경우
-                toast.success(`모든 파일 업로드가 성공적으로 처리되었습니다.\n\n총 ${result.total_files}개 파일 업로드 완료`);
+                toast.success(`모든 파일 업로드 성공\n\n총 ${result.total_files}개 파일 업로드 완료`);
             }
             
             // 파일 입력 초기화
