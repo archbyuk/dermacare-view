@@ -34,27 +34,25 @@ interface UploadFilesResponse {
 export async function uploadFiles(files: File[]): Promise<UploadFilesResponse> {
   
     try {
-        const fileUrls: FileUrl[] = [];
-
-        // 각 파일을 Vercel Blob에 업로드
-        for (const file of files) {
+        // 각 파일을 병렬로 Vercel Blob에 업로드
+        const uploadPromises = files.map(async (file) => {
             try {
                 const blob = await put(file.name, file, {
                     access: 'public',
-                    allowOverwrite: true, // 기존 파일 덮어쓰기
+                    allowOverwrite: true,
                 });
 
-                fileUrls.push({
+                return {
                     url: blob.url,
                     name: file.name,
                     size: file.size
-                });
-
+                };
             } catch (error) {
-                console.error(`파일 ${file.name} Blob 업로드 실패:`, error);
                 throw new Error(`파일 ${file.name} 업로드 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
             }
-        }
+        });
+
+        const fileUrls = await Promise.all(uploadPromises);
 
         // FormData로 파일 URL들 전송
         const formData = new FormData();
@@ -70,10 +68,7 @@ export async function uploadFiles(files: File[]): Promise<UploadFilesResponse> {
     } 
     
     catch (error: unknown) {
-        console.error('.xlsx 파일 업로드 에러:', error);
-        
         const errorMessage = error instanceof Error ? error.message : '.xlsx 파일 업로드에 실패했습니다.';
-        
         throw new Error(errorMessage);
     }
 }
