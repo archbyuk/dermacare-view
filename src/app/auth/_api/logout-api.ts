@@ -13,7 +13,7 @@ export async function logoutAction(): Promise<LogoutResponse> {
         
         // 서버에 로그아웃 요청
         if (refreshToken) {
-            await instance.post('/auth/logout', {
+            await instance.post('/logout', {
                 refresh_token: refreshToken
             });
         }
@@ -22,7 +22,7 @@ export async function logoutAction(): Promise<LogoutResponse> {
         await clearAuthCookies();
         
         return { success: true };
-    } 
+    }
     
     catch (error: unknown) {
         console.error('Logout error:', error);

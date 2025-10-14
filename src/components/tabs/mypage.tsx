@@ -94,9 +94,7 @@ export function MyPage({ onModalStateChange }: MyPageTabProps) {
                                         {isAuthenticated ? user?.username : '사용자'}
                                     </h2>
                                     <div className="flex items-center space-x-3 mt-1">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                                            {isAuthenticated ? `No. ${user?.user_id}` : 'Guest'}
-                                        </span>
+                                        
                                         {isAuthenticated && user?.role && (
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-800">
                                                 {user.role}

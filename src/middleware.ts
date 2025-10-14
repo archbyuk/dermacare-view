@@ -5,6 +5,10 @@ export async function middleware(request: NextRequest) {
     const accessToken = request.cookies.get('access_token')
     const refreshToken = request.cookies.get('refresh_token')
     
+    console.log('[Middleware] Path:', request.nextUrl.pathname)
+    console.log('[Middleware] access_token:', accessToken?.value ? '존재' : '없음')
+    console.log('[Middleware] refresh_token:', refreshToken?.value ? '존재' : '없음')
+    
     let isAuthenticated = !!accessToken
     
     // 보호된 경로들 (인증 필요)
@@ -17,14 +21,13 @@ export async function middleware(request: NextRequest) {
     const authPaths = ['/auth']
     const isAuthPath = authPaths.some(path => request.nextUrl.pathname.startsWith(path))
     
-    // access_token이 없지만 refresh_token이 있는 경우에만 토큰 갱신 시도
+    // access_token이 없지만 refresh_token이 있는 경우 토큰 갱신 시도
     if (!accessToken && refreshToken && (isProtectedPath || isAuthPath)) {
         try {
             const result = await refreshTokenAction()
         
             if (result.success) {
-                // 토큰 갱신 성공 - refreshTokenAction에서 이미 쿠키를 설정했으므로
-                // 단순히 리다이렉트만 처리
+                // 토큰 갱신 성공 - 백엔드가 새로운 토큰을 Set-Cookie로 설정
                 isAuthenticated = true
           
                 if (isAuthPath) {
@@ -34,15 +37,13 @@ export async function middleware(request: NextRequest) {
                     const redirectUrl = isTauri ? '/mso' : '/'
                     return NextResponse.redirect(new URL(redirectUrl, request.url))
                 }
-                // 보호된 경로에서는 계속 진행
             }
-        
         }
       
         catch (error: unknown) {
             console.error('Token refresh failed:', error)
           
-            // 토큰 갱신 실패 시 토큰들 삭제
+            // 토큰 갱신 실패 시 로그인 페이지로 리다이렉트
             if (isProtectedPath) {
                 const response = NextResponse.redirect(new URL('/auth', request.url))
                 response.cookies.delete('access_token')
@@ -53,19 +54,15 @@ export async function middleware(request: NextRequest) {
         }
     }
     
-    // 갱신된 토큰이 있다면 인증 상태 업데이트
-    if (!accessToken && refreshToken) {
-        // refresh_token만 있는 경우는 아직 인증되지 않은 것으로 처리
-        isAuthenticated = false
-    }
-    
-    // 보호된 경로에 접근하려는데 토큰이 없는 경우
+    // 보호된 경로에 접근하려는데 인증되지 않은 경우
     if (isProtectedPath && !isAuthenticated) {
+        console.log('[Middleware] 리다이렉트: /auth (인증 필요)')
         return NextResponse.redirect(new URL('/auth', request.url))
     }
     
     // 이미 인증된 사용자가 로그인 페이지에 접근하는 경우
     if (isAuthPath && isAuthenticated) {
+        console.log('[Middleware] 리다이렉트: 로그인된 사용자')
         // 타우리 환경 감지
         const userAgent = request.headers.get('user-agent') || ''
         const isTauri = userAgent.includes('Tauri')

@@ -4,20 +4,15 @@ import { z } from 'zod';
 export interface LoginResponse {
     success: boolean;
     message?: string;
-    user_id?: number;
     role?: string;
-    access_token?: string;
-    refresh_token?: string;
     username?: string;
-    error?: string; // 에러 메시지 추가
+    error?: string;
 }
 
 // RefreshToken 응답 타입
 export interface RefreshTokenResponse {
     success: boolean;
     message?: string;
-    accessToken?: string;
-    refreshToken?: string;
     error?: string;
 }
 
@@ -50,7 +45,6 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 
 // store: 사용자 정보 타입
 export interface User {
-    user_id: number;
     role: string;
     username: string;
 }
