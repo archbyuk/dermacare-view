@@ -14,10 +14,9 @@ export const useAuthStore = create<AuthState>()(
             // 로그인 성공 시 상태 업데이트
             login: (loginResponse: LoginResponse) => {
                 
-                if (loginResponse.success && loginResponse.user_id && loginResponse.role && loginResponse.username) {
+                if (loginResponse.success && loginResponse.role && loginResponse.username) {
                     set({ 
                         user: {
-                            user_id: loginResponse.user_id,
                             role: loginResponse.role,
                             username: loginResponse.username
                         }, 

@@ -21,6 +21,8 @@ export function useLogin() {
             
             // 로그인 요청
             const result = await loginAction(formData);
+
+            console.log('result', result);
             
             if (result && result.success) {
                 login(result);                   // useAuthStore의 login 함수 호출: 사용자 로그인 정보 저장
@@ -34,7 +36,9 @@ export function useLogin() {
                 if (isTauri) {
                     // 타우리 환경(데스크톱 앱)에서는 /mso로 이동
                     router.push('/mso');
-                } else {
+                } 
+                
+                else {
                     // 웹 환경에서는 역할 상관없이 /로 이동
                     router.push('/');
                 }
