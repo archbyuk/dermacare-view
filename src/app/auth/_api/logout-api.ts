@@ -32,7 +32,7 @@ export async function logoutAction(): Promise<LogoutResponse> {
         
         return { 
             success: false, 
-            error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.' 
+            error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.'
         };
     }
 }
