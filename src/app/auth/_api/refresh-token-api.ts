@@ -24,6 +24,9 @@ export async function refreshTokenAction(): Promise<RefreshTokenResponse> {
             refresh_token: refreshToken
         });
         
+        console.log('[Refresh Token] 백엔드 응답:', response.data);
+        console.log('[Refresh Token] Set-Cookie 헤더:', response.headers['set-cookie']);
+        
         if (response.data.success) {
             // 백엔드가 보낸 Set-Cookie 헤더 파싱하여 쿠키 설정
             const setCookieHeaders = response.headers['set-cookie'];

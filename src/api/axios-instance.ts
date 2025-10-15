@@ -21,6 +21,7 @@ instance.interceptors.request.use(async (config) => {
   } else {
     // 클라이언트 사이드 로직
     const token = getCookie('access_token');
+    console.log('token', token);
     if (token) config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
