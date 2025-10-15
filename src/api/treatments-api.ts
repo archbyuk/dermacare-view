@@ -11,15 +11,10 @@ import {
 // 시술 목록 조회
 export async function getProducts(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
   try {
-    const { page = 1, page_size = 30, product_type = 'all' } = params;
+    // const { product_type = 'all' } = params;
     
-    const response = await instance.get('/read/products', {
-      params: {
-        page,
-        page_size,
-        product_type
-      }
-    });
+    const response = await instance.get('/read/products');
+    // console.log('response:', response.data.errors);
     
     return response.data;
   } 
