@@ -54,11 +54,7 @@ export const useTreatmentsStore = create<TreatmentsState>()(
         try {
           set({ loading: true, error: null });
           
-          const response = await getProducts({
-            page: 1,
-            page_size: 10000,
-            product_type: 'all'
-          });
+          const response = await getProducts();
           
           set({
             treatments: response.data,
