@@ -9,12 +9,16 @@ import {
 } from '@/types/treatments';
 
 // 시술 목록 조회
-export async function getProducts(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
+export async function getProducts() {
   try {
-    // const { product_type = 'all' } = params;
+    const startTime = performance.now();
+    console.log('[API] /read/products 요청 시작');
     
     const response = await instance.get('/read/products');
-    // console.log('response:', response.data.errors);
+    
+    const endTime = performance.now();
+    const duration = (endTime - startTime).toFixed(2);
+    console.log(`[API] /read/products 응답 완료 - 소요 시간: ${duration}ms`);
     
     return response.data;
   } 
